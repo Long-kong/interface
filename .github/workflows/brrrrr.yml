@@ -1,0 +1,38 @@
+name: KONG GO BRRRR
+
+on:
+  create:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node JS v18.18.2
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - run: yarn install
+      - run: yarn prepare
+      - run: yarn graphql
+      - run: yarn build
+      - name: LFG!!
+        uses: JamesIves/github-pages-deploy-action@v4
+        with: 
+          token: ${{ secrets.WWW_TOKEN}}
+          commit-message: KONG GO BRRRR
+          git-config-name: long-kong
+          git-config-email: long-kong@users.noreply.github.com
+          repository-name: Long-kong/www
+          single-commit: true
+          branch: main
+          folder: build
+          clean: true
+          force: true
+
