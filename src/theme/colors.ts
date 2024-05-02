@@ -106,8 +106,10 @@ export const colors = {
   surface3_dark: '#FFFFFF12',
   surface4_dark: '#FFFFFF20',
   surface5_dark: '#00000004',
-  accent1_dark: '#FC72FF',
-  accent2_dark: '#311C31',
+  // accent1_dark: '#FC72FF',
+  // accent2_dark: '#311C31',
+  accent1_dark: '#063fc7',
+  accent2_dark: '#0B1835',
   neutral1_light: '#222222',
   neutral2_light: '#7D7D7D',
   neutral3_light: '#CECECE',
@@ -120,6 +122,7 @@ export const colors = {
   accent2_light: '#FFEFFF',
   success: '#40B66B',
   critical: '#FF5F52',
+  warning: '#EEB317',
   scrim: 'rgba(0, 0, 0, 0.60)',
 }
 

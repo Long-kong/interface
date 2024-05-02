@@ -2,12 +2,10 @@ import { Contract } from '@ethersproject/contracts'
 import { InterfaceEventName } from '@uniswap/analytics-events'
 import {
   ARGENT_WALLET_DETECTOR_ADDRESS,
-  ChainId,
   ENS_REGISTRAR_ADDRESSES,
   MULTICALL_ADDRESSES,
   NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
   TICK_LENS_ADDRESSES,
-  V2_ROUTER_ADDRESS,
   V3_MIGRATOR_ADDRESSES,
 } from '@uniswap/sdk-core'
 import IUniswapV2PairJson from '@uniswap/v2-core/build/IUniswapV2Pair.json'
@@ -28,14 +26,17 @@ import ERC1155_ABI from 'abis/erc1155.json'
 import { ArgentWalletDetector, EnsPublicResolver, EnsRegistrar, Erc20, Erc721, Erc1155, Weth } from 'abis/types'
 import WETH_ABI from 'abis/weth.json'
 import { sendAnalyticsEvent } from 'analytics'
+import { CONTRACT_ADDRESS } from 'constants/misc'
 import { DEPRECATED_RPC_PROVIDERS, RPC_PROVIDERS } from 'constants/providers'
 import { WRAPPED_NATIVE_CURRENCY } from 'constants/tokens'
+import { SupportedChainId } from 'constants/types'
 import { useFallbackProviderEnabled } from 'featureFlags/flags/fallbackProvider'
 import { useEffect, useMemo } from 'react'
 import { NonfungiblePositionManager, TickLens, UniswapInterfaceMulticall } from 'types/v3'
 import { V3Migrator } from 'types/v3/V3Migrator'
 import { getContract } from 'utils'
 
+const V2_ROUTER_ADDRESS = CONTRACT_ADDRESS // PROXY ROUTER
 const { abi: IUniswapV2PairABI } = IUniswapV2PairJson
 const { abi: IUniswapV2Router02ABI } = IUniswapV2Router02Json
 const { abi: TickLensABI } = TickLensJson
@@ -68,14 +69,14 @@ export function useContract<T extends Contract = Contract>(
 
 function useMainnetContract<T extends Contract = Contract>(address: string | undefined, ABI: any): T | null {
   const { chainId } = useWeb3React()
-  const isMainnet = chainId === ChainId.MAINNET
+  const isMainnet = chainId === SupportedChainId.MAINNET
   const contract = useContract(isMainnet ? address : undefined, ABI, false)
   const providers = useFallbackProviderEnabled() ? RPC_PROVIDERS : DEPRECATED_RPC_PROVIDERS
 
   return useMemo(() => {
     if (isMainnet) return contract
     if (!address) return null
-    const provider = providers[ChainId.MAINNET]
+    const provider = providers[SupportedChainId.MAINNET]
     try {
       return getContract(address, ABI, provider)
     } catch (error) {
@@ -115,7 +116,7 @@ export function useArgentWalletDetectorContract() {
 }
 
 export function useENSRegistrarContract() {
-  return useMainnetContract<EnsRegistrar>(ENS_REGISTRAR_ADDRESSES[ChainId.MAINNET], ENS_ABI)
+  return useMainnetContract<EnsRegistrar>(ENS_REGISTRAR_ADDRESSES[SupportedChainId.MAINNET], ENS_ABI)
 }
 
 export function useENSResolverContract(address: string | undefined) {
@@ -144,7 +145,7 @@ export function useInterfaceMulticall() {
 
 export function useMainnetInterfaceMulticall() {
   return useMainnetContract<UniswapInterfaceMulticall>(
-    MULTICALL_ADDRESSES[ChainId.MAINNET],
+    MULTICALL_ADDRESSES[SupportedChainId.MAINNET],
     MulticallABI
   ) as UniswapInterfaceMulticall
 }

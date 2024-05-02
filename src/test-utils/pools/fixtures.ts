@@ -1,7 +1,8 @@
 import { QueryResult } from '@apollo/client'
 import { BigNumber } from '@ethersproject/bignumber'
-import { ChainId, Currency, WETH9 } from '@uniswap/sdk-core'
+import { Currency, WETH9 } from '@uniswap/sdk-core'
 import { FeeAmount, Pool, Position } from '@uniswap/v3-sdk'
+import { SupportedChainId } from 'constants/types'
 import { USDC_MAINNET } from 'constants/tokens'
 import { Chain, Exact, TokenProjectQuery } from 'graphql/data/__generated__/types-and-hooks'
 import { Token } from 'graphql/thegraph/__generated__/types-and-hooks'
@@ -46,7 +47,7 @@ export const owner = '0xf5b6bb25f5beaea03dd014c6ef9fa9f3926bf36c'
 
 const pool = new Pool(
   USDC_MAINNET,
-  WETH9[ChainId.MAINNET],
+  WETH9[SupportedChainId.MAINNET],
   FeeAmount.MEDIUM,
   '1851127709498178402383049949138810',
   '7076437181775065414',
@@ -64,7 +65,7 @@ const details = {
   tokenId: BigNumber.from('0'),
   operator: '0x0',
   token0: USDC_MAINNET.address,
-  token1: WETH9[ChainId.MAINNET].address,
+  token1: WETH9[SupportedChainId.MAINNET].address,
   fee: FeeAmount.MEDIUM,
   tickLower: -100,
   tickUpper: 100,
@@ -78,7 +79,7 @@ export const useMultiChainPositionsReturnValue = {
   positions: [
     {
       owner,
-      chainId: ChainId.MAINNET,
+      chainId: SupportedChainId.MAINNET,
       position,
       pool,
       details,

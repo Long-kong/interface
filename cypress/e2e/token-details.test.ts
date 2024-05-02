@@ -1,10 +1,11 @@
-import { ChainId, WETH9 } from '@uniswap/sdk-core'
+import { WETH9 } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/types'
 import { FeatureFlag } from 'featureFlags'
 
 import { ARB, UNI } from '../../src/constants/tokens'
 import { getTestSelector } from '../utils'
 
-const UNI_MAINNET = UNI[ChainId.MAINNET]
+const UNI_MAINNET = UNI[SupportedChainId.MAINNET]
 
 const UNI_ADDRESS = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
 

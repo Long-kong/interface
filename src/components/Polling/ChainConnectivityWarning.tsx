@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
-import { ChainId } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import { getChainInfoOrDefault, L2ChainInfo } from 'constants/chainInfo'
+import { SupportedChainId } from 'constants/types'
 import { AlertTriangle } from 'react-feather'
 import styled from 'styled-components'
 import { MEDIA_WIDTHS } from 'theme'
@@ -44,6 +44,7 @@ const Wrapper = styled.div`
   padding: 16px 20px;
   position: fixed;
   right: 16px;
+  z-index: 2;
   @media screen and (min-width: ${MEDIA_WIDTHS.deprecated_upToMedium}px) {
     display: block;
   }
@@ -63,7 +64,7 @@ export function ChainConnectivityWarning() {
         </TitleText>
       </TitleRow>
       <BodyRow>
-        {chainId === ChainId.MAINNET ? (
+        {chainId === SupportedChainId.MAINNET ? (
           <Trans>You may have lost your network connection.</Trans>
         ) : (
           <Trans>{label} might be down right now, or you may have lost your network connection.</Trans>

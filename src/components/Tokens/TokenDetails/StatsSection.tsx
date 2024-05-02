@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
-import { ChainId } from '@uniswap/sdk-core'
 import { MouseoverTooltip } from 'components/Tooltip'
 import { getChainInfo } from 'constants/chainInfo'
+import { SupportedChainId } from 'constants/types'
 import { useInfoTDPEnabled } from 'featureFlags/flags/infoTDP'
 import { TokenQueryData } from 'graphql/data/Token'
 import { ReactNode } from 'react'
@@ -81,7 +81,7 @@ function Stat({
 }
 
 type StatsSectionProps = {
-  chainId: ChainId
+  chainId: SupportedChainId
   address: string
   tokenQueryData: TokenQueryData
 }

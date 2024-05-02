@@ -42,6 +42,7 @@ import FormattedCurrencyAmount from '../../components/FormattedCurrencyAmount'
 import CurrencyLogo from '../../components/Logo/CurrencyLogo'
 import { AutoRow, RowBetween, RowFixed } from '../../components/Row'
 import { WRAPPED_NATIVE_CURRENCY } from '../../constants/tokens'
+import { SupportedChainId } from '../../constants/types'
 import { useToken } from '../../hooks/Tokens'
 import { usePairContract, useV2MigratorContract } from '../../hooks/useContract'
 import useIsArgentWallet from '../../hooks/useIsArgentWallet'
@@ -128,7 +129,9 @@ function V2PairMigration({
 }) {
   const { chainId, account } = useWeb3React()
   const theme = useTheme()
-  const v2FactoryAddress = chainId ? V2_FACTORY_ADDRESSES[chainId] : undefined
+  const v2FactoryAddress = chainId
+    ? V2_FACTORY_ADDRESSES[chainId]
+    : undefined
   const trace = useTrace()
 
   const pairFactory = useSingleCallResult(pair, 'factory')

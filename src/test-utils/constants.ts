@@ -1,8 +1,9 @@
-import { ChainId, CurrencyAmount, Percent, Token, TradeType } from '@uniswap/sdk-core'
+import { CurrencyAmount, Percent, Token, TradeType } from '@uniswap/sdk-core'
 // This is a test file, so the import of smart-order-router is allowed.
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import { V3Route } from '@uniswap/smart-order-router'
 import { FeeAmount, Pool } from '@uniswap/v3-sdk'
+import { SupportedChainId } from 'constants/types'
 import { ZERO_PERCENT } from 'constants/misc'
 import { nativeOnChain } from 'constants/tokens'
 import { BigNumber } from 'ethers/lib/ethers'
@@ -13,7 +14,7 @@ export const TEST_TOKEN_1 = new Token(1, '0x000000000000000000000000000000000000
 export const TEST_TOKEN_2 = new Token(1, '0x0000000000000000000000000000000000000002', 18, 'DEF', 'Def')
 export const TEST_TOKEN_3 = new Token(1, '0x0000000000000000000000000000000000000003', 18, 'GHI', 'Ghi')
 export const TEST_RECIPIENT_ADDRESS = '0x0000000000000000000000000000000000000004'
-export const ETH_MAINNET = nativeOnChain(ChainId.MAINNET)
+export const ETH_MAINNET = nativeOnChain(SupportedChainId.MAINNET)
 
 export const TEST_POOL_12 = new Pool(
   TEST_TOKEN_1,

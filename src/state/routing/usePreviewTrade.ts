@@ -1,6 +1,7 @@
 import { skipToken } from '@reduxjs/toolkit/query/react'
-import { ChainId, Currency, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core'
 import { ZERO_PERCENT } from 'constants/misc'
+import { SupportedChainId } from 'constants/types'
 import { useQuickRouteMainnetEnabled } from 'featureFlags/flags/quickRouteMainnet'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { useMemo } from 'react'
@@ -31,7 +32,7 @@ function useQuickRouteArguments({
 
   return useMemo(() => {
     if (!tokenIn || !tokenOut || !amount) return skipToken
-    if (!enabledMainnet || tokenIn.chainId !== ChainId.MAINNET) return skipToken
+    if (!enabledMainnet || tokenIn.chainId !== SupportedChainId.MAINNET) return skipToken
 
     return {
       amount: amount.quotient.toString(),

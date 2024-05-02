@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro'
-import { ChainId } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
+import { SupportedChainId } from 'constants/types'
 import styled from 'styled-components'
 import { ThemedText } from 'theme/components'
 
@@ -38,7 +38,7 @@ const EmptyState = ({ HeaderContent, SubHeaderContent }: EmptyStateProps) => (
 
 export default function ProposalEmptyState() {
   const { chainId } = useWeb3React()
-  if (chainId && chainId !== ChainId.MAINNET) {
+  if (chainId && chainId !== SupportedChainId.MAINNET) {
     return (
       <EmptyState
         HeaderContent={() => <Trans>Please connect to Layer 1 Ethereum</Trans>}

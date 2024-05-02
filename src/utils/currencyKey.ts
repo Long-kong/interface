@@ -1,4 +1,5 @@
-import { ChainId, Currency } from '@uniswap/sdk-core'
+import { Currency } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/types'
 import { NATIVE_CHAIN_ID } from 'constants/tokens'
 import { TokenStandard } from 'graphql/data/__generated__/types-and-hooks'
 import { Chain } from 'graphql/data/Token'
@@ -6,7 +7,7 @@ import { supportedChainIdFromGQLChain } from 'graphql/data/util'
 
 export type CurrencyKey = string
 
-export function buildCurrencyKey(chainId: ChainId, address: string): CurrencyKey {
+export function buildCurrencyKey(chainId: SupportedChainId, address: string): CurrencyKey {
   // We lowercase for compatibility/indexability between gql tokens and sdk currencies
   return `${chainId}-${address.toLowerCase()}`
 }

@@ -1,5 +1,6 @@
-import { ChainId, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, WETH9 } from '@uniswap/sdk-core'
+import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, WETH9 } from '@uniswap/sdk-core'
 import { DAI } from 'constants/tokens'
+import { SupportedChainId } from 'constants/types'
 import {
   AssetActivityPartsFragment,
   Chain,
@@ -457,7 +458,7 @@ export const MockRemoveLiquidity = {
   ...mockAssetActivityPartsFragment,
   details: {
     ...commonTransactionDetailsFields,
-    to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[ChainId.MAINNET],
+    to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[SupportedChainId.MAINNET],
     type: TransactionType.Receive,
     assetChanges: [
       mockTokenTransferInPartsFragment,

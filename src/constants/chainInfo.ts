@@ -1,22 +1,22 @@
-import { ChainId } from '@uniswap/sdk-core'
 import ms from 'ms'
 import { darkTheme } from 'theme/colors'
 
 import { SupportedL1ChainId, SupportedL2ChainId } from './chains'
 import { ARBITRUM_LIST, AVALANCHE_LIST, BASE_LIST, CELO_LIST, OPTIMISM_LIST, PLASMA_BNB_LIST } from './lists'
+import { SupportedChainId } from './types'
 
 export const AVERAGE_L1_BLOCK_TIME = ms(`12s`)
 
 // The block number at which v3 was deployed on each chain, separate from the UNIVERSAL_ROUTER_CREATION_BLOCK
 export const START_BLOCKS: { [key: number]: number } = {
-  [ChainId.MAINNET]: 14292820,
-  [ChainId.POLYGON]: 25459720,
-  [ChainId.ARBITRUM_ONE]: 175,
-  [ChainId.OPTIMISM]: 10028767,
-  [ChainId.CELO]: 13916355,
-  [ChainId.BNB]: 26324014,
-  [ChainId.AVALANCHE]: 31422450,
-  [ChainId.BASE]: 1371680,
+  [SupportedChainId.MAINNET]: 14292820,
+  [SupportedChainId.POLYGON]: 25459720,
+  [SupportedChainId.ARBITRUM_ONE]: 175,
+  [SupportedChainId.OPTIMISM]: 10028767,
+  [SupportedChainId.CELO]: 13916355,
+  [SupportedChainId.BNB]: 26324014,
+  [SupportedChainId.AVALANCHE]: 31422450,
+  [SupportedChainId.BASE]: 1371680,
 }
 
 export enum NetworkType {
@@ -58,7 +58,7 @@ type ChainInfoMap = { readonly [chainId: number]: L1ChainInfo | L2ChainInfo } & 
 } & { readonly [chainId in SupportedL1ChainId]: L1ChainInfo }
 
 const CHAIN_INFO: ChainInfoMap = {
-  [ChainId.MAINNET]: {
+  [SupportedChainId.MAINNET]: {
     networkType: NetworkType.L1,
     docs: 'https://docs.uniswap.org/',
     explorer: 'https://etherscan.io/',
@@ -67,7 +67,7 @@ const CHAIN_INFO: ChainInfoMap = {
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     color: darkTheme.chain_1,
   },
-  [ChainId.GOERLI]: {
+  [SupportedChainId.GOERLI]: {
     networkType: NetworkType.L1,
     docs: 'https://docs.uniswap.org/',
     explorer: 'https://goerli.etherscan.io/',
@@ -76,7 +76,7 @@ const CHAIN_INFO: ChainInfoMap = {
     nativeCurrency: { name: 'Görli Ether', symbol: 'görETH', decimals: 18 },
     color: darkTheme.chain_5,
   },
-  [ChainId.SEPOLIA]: {
+  [SupportedChainId.SEPOLIA]: {
     networkType: NetworkType.L1,
     docs: 'https://docs.uniswap.org/',
     explorer: 'https://sepolia.etherscan.io/',
@@ -85,7 +85,7 @@ const CHAIN_INFO: ChainInfoMap = {
     nativeCurrency: { name: 'Sepolia Ether', symbol: 'SepoliaETH', decimals: 18 },
     color: darkTheme.chain_5,
   },
-  [ChainId.OPTIMISM]: {
+  [SupportedChainId.OPTIMISM]: {
     networkType: NetworkType.L2,
     blockWaitMsBeforeWarning: ms(`25m`),
     bridge: 'https://app.optimism.io/bridge',
@@ -100,7 +100,7 @@ const CHAIN_INFO: ChainInfoMap = {
     color: darkTheme.chain_10,
     backgroundColor: darkTheme.chain_10_background,
   },
-  [ChainId.OPTIMISM_GOERLI]: {
+  [SupportedChainId.OPTIMISM_GOERLI]: {
     networkType: NetworkType.L2,
     blockWaitMsBeforeWarning: ms(`25m`),
     bridge: 'https://app.optimism.io/bridge',
@@ -114,7 +114,7 @@ const CHAIN_INFO: ChainInfoMap = {
     nativeCurrency: { name: 'Optimism Goerli Ether', symbol: 'görOpETH', decimals: 18 },
     color: darkTheme.chain_420,
   },
-  [ChainId.ARBITRUM_ONE]: {
+  [SupportedChainId.ARBITRUM_ONE]: {
     networkType: NetworkType.L2,
     blockWaitMsBeforeWarning: ms(`10m`),
     bridge: 'https://bridge.arbitrum.io/',
@@ -128,7 +128,7 @@ const CHAIN_INFO: ChainInfoMap = {
     color: darkTheme.chain_42,
     backgroundColor: darkTheme.chain_42161_background,
   },
-  [ChainId.ARBITRUM_GOERLI]: {
+  [SupportedChainId.ARBITRUM_GOERLI]: {
     networkType: NetworkType.L2,
     blockWaitMsBeforeWarning: ms(`10m`),
     bridge: 'https://bridge.arbitrum.io/',
@@ -141,7 +141,7 @@ const CHAIN_INFO: ChainInfoMap = {
     nativeCurrency: { name: 'Goerli Arbitrum Ether', symbol: 'goerliArbETH', decimals: 18 },
     color: darkTheme.chain_421613,
   },
-  [ChainId.POLYGON]: {
+  [SupportedChainId.POLYGON]: {
     networkType: NetworkType.L1,
     blockWaitMsBeforeWarning: ms(`10m`),
     bridge: 'https://wallet.polygon.technology/polygon/bridge',
@@ -153,7 +153,7 @@ const CHAIN_INFO: ChainInfoMap = {
     color: darkTheme.chain_137,
     backgroundColor: darkTheme.chain_137_background,
   },
-  [ChainId.POLYGON_MUMBAI]: {
+  [SupportedChainId.POLYGON_MUMBAI]: {
     networkType: NetworkType.L1,
     blockWaitMsBeforeWarning: ms(`10m`),
     bridge: 'https://wallet.polygon.technology/polygon/bridge/deposit',
@@ -163,7 +163,7 @@ const CHAIN_INFO: ChainInfoMap = {
     label: 'Polygon Mumbai',
     nativeCurrency: { name: 'Polygon Mumbai Matic', symbol: 'mMATIC', decimals: 18 },
   },
-  [ChainId.CELO]: {
+  [SupportedChainId.CELO]: {
     networkType: NetworkType.L1,
     blockWaitMsBeforeWarning: ms(`10m`),
     bridge: 'https://www.portalbridge.com/#/transfer',
@@ -174,7 +174,7 @@ const CHAIN_INFO: ChainInfoMap = {
     nativeCurrency: { name: 'Celo', symbol: 'CELO', decimals: 18 },
     defaultListUrl: CELO_LIST,
   },
-  [ChainId.CELO_ALFAJORES]: {
+  [SupportedChainId.CELO_ALFAJORES]: {
     networkType: NetworkType.L1,
     blockWaitMsBeforeWarning: ms(`10m`),
     bridge: 'https://www.portalbridge.com/#/transfer',
@@ -185,7 +185,7 @@ const CHAIN_INFO: ChainInfoMap = {
     nativeCurrency: { name: 'Celo', symbol: 'CELO', decimals: 18 },
     defaultListUrl: CELO_LIST,
   },
-  [ChainId.BNB]: {
+  [SupportedChainId.BNB]: {
     networkType: NetworkType.L1,
     blockWaitMsBeforeWarning: ms(`10m`),
     bridge: 'https://cbridge.celer.network/1/56',
@@ -198,7 +198,7 @@ const CHAIN_INFO: ChainInfoMap = {
     color: darkTheme.chain_56,
     backgroundColor: darkTheme.chain_56_background,
   },
-  [ChainId.AVALANCHE]: {
+  [SupportedChainId.AVALANCHE]: {
     networkType: NetworkType.L1,
     blockWaitMsBeforeWarning: ms(`10m`),
     bridge: 'https://core.app/bridge/',
@@ -211,7 +211,7 @@ const CHAIN_INFO: ChainInfoMap = {
     color: darkTheme.chain_43114,
     backgroundColor: darkTheme.chain_43114_background,
   },
-  [ChainId.BASE]: {
+  [SupportedChainId.BASE]: {
     networkType: NetworkType.L2,
     blockWaitMsBeforeWarning: ms(`25m`),
     bridge: 'https://bridge.base.org/deposit',
@@ -228,19 +228,19 @@ const CHAIN_INFO: ChainInfoMap = {
 
 export function getChainInfo(
   chainId: SupportedL1ChainId,
-  featureFlags?: Record<ChainId | SupportedL1ChainId | SupportedL2ChainId | number, boolean>
+  featureFlags?: Record<SupportedChainId | SupportedL1ChainId | SupportedL2ChainId | number, boolean>
 ): L1ChainInfo
 export function getChainInfo(
   chainId: SupportedL2ChainId,
-  featureFlags?: Record<ChainId | SupportedL1ChainId | SupportedL2ChainId | number, boolean>
+  featureFlags?: Record<SupportedChainId | SupportedL1ChainId | SupportedL2ChainId | number, boolean>
 ): L2ChainInfo
 export function getChainInfo(
-  chainId: ChainId,
-  featureFlags?: Record<ChainId | SupportedL1ChainId | SupportedL2ChainId | number, boolean>
+  chainId: SupportedChainId,
+  featureFlags?: Record<SupportedChainId | SupportedL1ChainId | SupportedL2ChainId | number, boolean>
 ): L1ChainInfo | L2ChainInfo
 export function getChainInfo(
-  chainId: ChainId | SupportedL1ChainId | SupportedL2ChainId | number | undefined,
-  featureFlags?: Record<ChainId | SupportedL1ChainId | SupportedL2ChainId | number, boolean>
+  chainId: SupportedChainId | SupportedL1ChainId | SupportedL2ChainId | number | undefined,
+  featureFlags?: Record<SupportedChainId | SupportedL1ChainId | SupportedL2ChainId | number, boolean>
 ): L1ChainInfo | L2ChainInfo | undefined
 
 /**
@@ -253,7 +253,7 @@ export function getChainInfo(
  */
 export function getChainInfo(
   chainId: any,
-  featureFlags?: Record<ChainId | SupportedL1ChainId | SupportedL2ChainId | number, boolean>
+  featureFlags?: Record<SupportedChainId | SupportedL1ChainId | SupportedL2ChainId | number, boolean>
 ): any {
   if (featureFlags && chainId in featureFlags) {
     return featureFlags[chainId] ? CHAIN_INFO[chainId] : undefined
@@ -264,7 +264,7 @@ export function getChainInfo(
   return undefined
 }
 
-const MAINNET_INFO = CHAIN_INFO[ChainId.MAINNET]
+const MAINNET_INFO = CHAIN_INFO[SupportedChainId.MAINNET]
 export function getChainInfoOrDefault(chainId: number | undefined, featureFlags?: Record<number, boolean>) {
   return getChainInfo(chainId, featureFlags) ?? MAINNET_INFO
 }

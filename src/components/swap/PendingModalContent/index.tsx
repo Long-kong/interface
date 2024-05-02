@@ -1,10 +1,11 @@
 import { t, Trans } from '@lingui/macro'
-import { ChainId, Currency } from '@uniswap/sdk-core'
+import { Currency } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import { OrderContent } from 'components/AccountDrawer/MiniPortfolio/Activity/OffchainActivityModal'
 import { ColumnCenter } from 'components/Column'
 import Column from 'components/Column'
 import Row from 'components/Row'
+import { SupportedChainId } from 'constants/types'
 import { TransactionStatus } from 'graphql/data/__generated__/types-and-hooks'
 import { SwapResult } from 'hooks/useSwapCallback'
 import { useUnmountingAnimation } from 'hooks/useUnmountingAnimation'
@@ -164,8 +165,8 @@ function getPendingConfirmationContent({
       // On Mainnet, we show a "submitted" state while the transaction is pending confirmation.
       return {
         title,
-        subtitle: chainId === ChainId.MAINNET ? explorerLink : tradeSummary,
-        bottomLabel: chainId === ChainId.MAINNET ? t`Transaction pending...` : explorerLink,
+        subtitle: chainId === SupportedChainId.MAINNET ? explorerLink : tradeSummary,
+        bottomLabel: chainId === SupportedChainId.MAINNET ? t`Transaction pending...` : explorerLink,
       }
     } else {
       return {
@@ -321,8 +322,8 @@ export function PendingModalContent({
   }
 
   // On mainnet, we show a different icon when the transaction is submitted but pending confirmation.
-  const showSubmitted = swapPending && !swapConfirmed && chainId === ChainId.MAINNET
-  const showSuccess = swapConfirmed || (chainId !== ChainId.MAINNET && swapPending)
+  const showSubmitted = swapPending && !swapConfirmed && chainId === SupportedChainId.MAINNET
+  const showSuccess = swapConfirmed || (chainId !== SupportedChainId.MAINNET && swapPending)
 
   const transactionPending = revocationPending || tokenApprovalPending || wrapPending || swapPending
 

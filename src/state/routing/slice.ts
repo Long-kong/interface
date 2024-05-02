@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery, FetchBaseQueryError } from '@reduxjs/toolkit/query/react'
 import { Protocol } from '@uniswap/router-sdk'
 import { TradeType } from '@uniswap/sdk-core'
-import { sendAnalyticsEvent } from 'analytics'
 import { isUniswapXSupportedChain } from 'constants/chains'
 import ms from 'ms'
 import { logSwapQuoteRequest } from 'tracing/swapFlowLoggers'
@@ -16,10 +15,9 @@ import {
   RoutingConfig,
   SwapRouterNativeAssets,
   TradeResult,
-  URAQuoteResponse,
   URAQuoteType,
 } from './types'
-import { isExactInput, transformRoutesToTrade } from './utils'
+import { transformRoutesToTrade } from './utils'
 
 const UNISWAP_API_URL = process.env.REACT_APP_UNISWAP_API_URL
 if (UNISWAP_API_URL === undefined) {
@@ -126,68 +124,68 @@ export const routingApi = createApi({
       async queryFn(args, _api, _extraOptions, fetch) {
         logSwapQuoteRequest(args.tokenInChainId, args.routerPreference, false)
         const quoteStartMark = performance.mark(`quote-fetch-start-${Date.now()}`)
-        try {
-          const {
-            tokenInAddress: tokenIn,
-            tokenInChainId,
-            tokenOutAddress: tokenOut,
-            tokenOutChainId,
-            amount,
-            tradeType,
-            sendPortionEnabled,
-          } = args
+        // try {
+        //   const {
+        //     tokenInAddress: tokenIn,
+        //     tokenInChainId,
+        //     tokenOutAddress: tokenOut,
+        //     tokenOutChainId,
+        //     amount,
+        //     tradeType,
+        //     sendPortionEnabled,
+        //   } = args
 
-          const requestBody = {
-            tokenInChainId,
-            tokenIn,
-            tokenOutChainId,
-            tokenOut,
-            amount,
-            sendPortionEnabled,
-            type: isExactInput(tradeType) ? 'EXACT_INPUT' : 'EXACT_OUTPUT',
-            intent: args.routerPreference === INTERNAL_ROUTER_PREFERENCE_PRICE ? 'pricing' : undefined,
-            configs: getRoutingAPIConfig(args),
-          }
+        //   const requestBody = {
+        //     tokenInChainId,
+        //     tokenIn,
+        //     tokenOutChainId,
+        //     tokenOut,
+        //     amount,
+        //     sendPortionEnabled,
+        //     type: isExactInput(tradeType) ? 'EXACT_INPUT' : 'EXACT_OUTPUT',
+        //     intent: args.routerPreference === INTERNAL_ROUTER_PREFERENCE_PRICE ? 'pricing' : undefined,
+        //     configs: getRoutingAPIConfig(args),
+        //   }
 
-          const response = await fetch({
-            method: 'POST',
-            url: '/quote',
-            body: JSON.stringify(requestBody),
-          })
+        //   const response = await fetch({
+        //     method: 'POST',
+        //     url: '/quote',
+        //     body: JSON.stringify(requestBody),
+        //   })
 
-          if (response.error) {
-            try {
-              // cast as any here because we do a runtime check on it being an object before indexing into .errorCode
-              const errorData = response.error.data as { errorCode?: string; detail?: string }
-              // NO_ROUTE should be treated as a valid response to prevent retries.
-              if (
-                typeof errorData === 'object' &&
-                (errorData?.errorCode === 'NO_ROUTE' || errorData?.detail === 'No quotes available')
-              ) {
-                sendAnalyticsEvent('No quote received from routing API', {
-                  requestBody,
-                  response,
-                  routerPreference: args.routerPreference,
-                })
-                return {
-                  data: { state: QuoteState.NOT_FOUND, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration },
-                }
-              }
-            } catch {
-              throw response.error
-            }
-          }
+        //   if (response.error) {
+        //     try {
+        //       // cast as any here because we do a runtime check on it being an object before indexing into .errorCode
+        //       const errorData = response.error.data as { errorCode?: string; detail?: string }
+        //       // NO_ROUTE should be treated as a valid response to prevent retries.
+        //       if (
+        //         typeof errorData === 'object' &&
+        //         (errorData?.errorCode === 'NO_ROUTE' || errorData?.detail === 'No quotes available')
+        //       ) {
+        //         sendAnalyticsEvent('No quote received from routing API', {
+        //           requestBody,
+        //           response,
+        //           routerPreference: args.routerPreference,
+        //         })
+        //         return {
+        //           data: { state: QuoteState.NOT_FOUND, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration },
+        //         }
+        //       }
+        //     } catch {
+        //       throw response.error
+        //     }
+        //   }
 
-          const uraQuoteResponse = response.data as URAQuoteResponse
-          const tradeResult = await transformRoutesToTrade(args, uraQuoteResponse, QuoteMethod.ROUTING_API)
-          return { data: { ...tradeResult, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration } }
-        } catch (error: any) {
-          console.warn(
-            `GetQuote failed on Unified Routing API, falling back to client: ${
-              error?.message ?? error?.detail ?? error
-            }`
-          )
-        }
+        //   const uraQuoteResponse = response.data as URAQuoteResponse
+        //   const tradeResult = await transformRoutesToTrade(args, uraQuoteResponse, QuoteMethod.ROUTING_API)
+        //   return { data: { ...tradeResult, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration } }
+        // } catch (error: any) {
+        //   console.warn(
+        //     `GetQuote failed on Unified Routing API, falling back to client: ${
+        //       error?.message ?? error?.detail ?? error
+        //     }`
+        //   )
+        // }
 
         try {
           const { getRouter, getClientSideQuote } = await import('lib/hooks/routing/clientSideSmartOrderRouter')

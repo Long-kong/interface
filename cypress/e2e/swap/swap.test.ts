@@ -1,10 +1,10 @@
 import { SwapEventName } from '@uniswap/analytics-events'
-import { ChainId } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/types'
 
 import { UNI, USDC_MAINNET } from '../../../src/constants/tokens'
 import { getBalance, getTestSelector } from '../../utils'
 
-const UNI_MAINNET = UNI[ChainId.MAINNET]
+const UNI_MAINNET = UNI[SupportedChainId.MAINNET]
 
 describe('Swap', () => {
   describe('Swap on main page', () => {

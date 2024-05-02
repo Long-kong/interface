@@ -25,7 +25,7 @@ import CTACards from './CTACards'
 import { LoadingRows } from './styled'
 
 const PageWrapper = styled(AutoColumn)`
-  padding: 68px 8px 0px;
+  padding: 24px 8px 0px;
   max-width: 870px;
   width: 100%;
 
@@ -36,7 +36,7 @@ const PageWrapper = styled(AutoColumn)`
 
   @media (max-width: ${({ theme }) => `${theme.breakpoint.sm}px`}) {
     max-width: 500px;
-    padding-top: 20px;
+    // padding-top: 20px;
   }
 `
 const TitleRow = styled(RowBetween)`

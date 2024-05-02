@@ -1,9 +1,10 @@
-import { ChainId, Currency } from '@uniswap/sdk-core'
+import { Currency } from '@uniswap/sdk-core'
 import blankTokenUrl from 'assets/svg/blank_token.svg'
 import { ReactComponent as UnknownStatus } from 'assets/svg/contract-interaction.svg'
 import { MissingImageLogo } from 'components/Logo/AssetLogo'
 import { ChainLogo, getDefaultBorderRadius } from 'components/Logo/ChainLogo'
 import { Unicon } from 'components/Unicon'
+import { SupportedChainId } from 'constants/types'
 import useTokenLogoSource from 'hooks/useAssetLogoSource'
 import useENSAvatar from 'hooks/useENSAvatar'
 import React from 'react'
@@ -85,7 +86,7 @@ function DoubleLogo({ logo1, onError1, logo2, onError2, size }: DoubleLogoProps)
 }
 
 interface DoubleCurrencyLogoProps {
-  chainId: ChainId
+  chainId: SupportedChainId
   currencies: Array<Currency | undefined>
   backupImages?: Array<string | undefined>
   size: string
@@ -131,7 +132,7 @@ function PortfolioAvatar({ accountAddress, size }: { accountAddress: string; siz
 }
 
 interface PortfolioLogoProps {
-  chainId: ChainId
+  chainId: SupportedChainId
   accountAddress?: string
   currencies?: Array<Currency | undefined>
   images?: Array<string | undefined>
@@ -139,8 +140,8 @@ interface PortfolioLogoProps {
   style?: React.CSSProperties
 }
 
-function SquareL2Logo({ chainId }: { chainId: ChainId }) {
-  if (chainId === ChainId.MAINNET) return null
+function SquareL2Logo({ chainId }: { chainId: SupportedChainId }) {
+  if (chainId === SupportedChainId.MAINNET) return null
 
   return (
     <L2LogoContainer>

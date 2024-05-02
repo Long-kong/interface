@@ -1,10 +1,11 @@
 import { t, Trans } from '@lingui/macro'
-import { ChainId, Currency } from '@uniswap/sdk-core'
+import { Currency } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import Badge from 'components/Badge'
 import { ChainLogo } from 'components/Logo/ChainLogo'
 import { getChainInfo } from 'constants/chainInfo'
 import { SupportedL2ChainId } from 'constants/chains'
+import { SupportedChainId } from 'constants/types'
 import useCurrencyLogoURIs from 'lib/hooks/useCurrencyLogoURIs'
 import { ReactNode, useCallback, useState } from 'react'
 import { AlertCircle, ArrowUpCircle, CheckCircle } from 'react-feather'
@@ -115,7 +116,7 @@ function TransactionSubmittedContent({
       .catch(() => setSuccess(false))
   }, [connector, logoURL, token])
 
-  const explorerText = chainId === ChainId.MAINNET ? t`View on  Etherscan` : t`View on Block Explorer`
+  const explorerText = chainId === SupportedChainId.MAINNET ? t`View on  Etherscan` : t`View on Block Explorer`
 
   return (
     <Wrapper>

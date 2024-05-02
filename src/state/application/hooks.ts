@@ -150,6 +150,22 @@ export function useToggleFeatureFlags(): () => void {
   return useToggleModal(ApplicationModal.FEATURE_FLAGS)
 }
 
+export function useToggleReferralModal(): () => void {
+  return useToggleModal(ApplicationModal.REFERRAL)
+}
+
+export function useToggleAnnouncementsModal(): () => void {
+  return useToggleModal(ApplicationModal.ANNOUNCEMENTS)
+}
+
+export function useToggleSellModal(): () => void {
+  return useToggleModal(ApplicationModal.SELL)
+}
+
+export function useToggleAffiliatesModal(): () => void {
+  return useToggleModal(ApplicationModal.AFFILIATES)
+}
+
 // returns a function that allows adding a popup
 export function useAddPopup(): (content: PopupContent, key?: string, removeAfterMs?: number) => void {
   const dispatch = useAppDispatch()

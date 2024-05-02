@@ -1,4 +1,4 @@
-import { ChainId } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/types'
 import gql from 'graphql-tag'
 import { useMemo } from 'react'
 
@@ -85,18 +85,18 @@ export interface PoolData {
 
 export function usePoolData(
   poolAddress: string,
-  chainId?: ChainId
+  chainId?: SupportedChainId
 ): {
   loading: boolean
   error: boolean
   data?: PoolData
 } {
   const poolId = [poolAddress]
-  const apolloClient = chainToApolloClient[chainId || ChainId.MAINNET]
+  const apolloClient = chainToApolloClient[chainId || SupportedChainId.MAINNET]
 
   // get blocks from historic timestamps
   const [t24, t48, tWeek] = useDeltaTimestamps()
-  const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48, tWeek], chainId || ChainId.MAINNET)
+  const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48, tWeek], chainId || SupportedChainId.MAINNET)
   const [block24, block48, blockWeek] = blocks ?? []
 
   const { loading, error, data } = usePoolDataQuery({

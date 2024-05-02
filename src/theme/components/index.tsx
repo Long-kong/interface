@@ -94,8 +94,8 @@ export const ClickableStyle = css`
 `
 
 const LinkStyle = css`
-  color: ${({ theme }) => theme.accent1};
-  stroke: ${({ theme }) => theme.accent1};
+  color: ${({ theme }) => theme.neutral1};
+  stroke: ${({ theme }) => theme.neutral1};
   font-weight: 500;
 `
 

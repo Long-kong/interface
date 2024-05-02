@@ -1,8 +1,8 @@
-import { ChainId } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import { getConnection } from 'connection'
 import { didUserReject } from 'connection/utils'
 import { CHAIN_IDS_TO_NAMES, isSupportedChain } from 'constants/chains'
+import { SupportedChainId } from 'constants/types'
 import { useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { addPopup, PopupType } from 'state/application/reducer'
@@ -17,11 +17,10 @@ export default function useSelectChain() {
   const [searchParams, setSearchParams] = useSearchParams()
 
   return useCallback(
-    async (targetChain: ChainId) => {
+    async (targetChain: SupportedChainId) => {
       if (!connector) return
 
       const connection = getConnection(connector)
-
       try {
         await switchChain(connector, targetChain)
         if (isSupportedChain(targetChain)) {

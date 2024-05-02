@@ -6,6 +6,7 @@ const Card = styled(Box)<{ width?: string; padding?: string; border?: string; $b
   padding: ${({ padding }) => padding ?? '1rem'};
   border-radius: ${({ $borderRadius }) => $borderRadius ?? '16px'};
   border: ${({ border }) => border};
+  z-index: 1;
 `
 export default Card
 

@@ -1,5 +1,4 @@
 import {
-  ChainId,
   MULTICALL_ADDRESSES,
   NONFUNGIBLE_POSITION_MANAGER_ADDRESSES as V3NFT_ADDRESSES,
   Token,
@@ -10,6 +9,7 @@ import NFTPositionManagerJSON from '@uniswap/v3-periphery/artifacts/contracts/No
 import { useWeb3React } from '@web3-react/core'
 import { isSupportedChain } from 'constants/chains'
 import { DEPRECATED_RPC_PROVIDERS, RPC_PROVIDERS } from 'constants/providers'
+import { SupportedChainId } from 'constants/types'
 import { BaseContract } from 'ethers/lib/ethers'
 import { useFallbackProviderEnabled } from 'featureFlags/flags/fallbackProvider'
 import { ContractInput, useUniswapPricesQuery } from 'graphql/data/__generated__/types-and-hooks'
@@ -28,7 +28,7 @@ type ContractMap<T extends BaseContract> = { [key: number]: T }
 function useContractMultichain<T extends BaseContract>(
   addressMap: AddressMap,
   ABI: any,
-  chainIds?: ChainId[]
+  chainIds?: SupportedChainId[]
 ): ContractMap<T> {
   const { chainId: walletChainId, provider: walletProvider } = useWeb3React()
 
@@ -56,11 +56,11 @@ function useContractMultichain<T extends BaseContract>(
   }, [ABI, addressMap, chainIds, networkProviders, walletChainId, walletProvider])
 }
 
-export function useV3ManagerContracts(chainIds: ChainId[]): ContractMap<NonfungiblePositionManager> {
+export function useV3ManagerContracts(chainIds: SupportedChainId[]): ContractMap<NonfungiblePositionManager> {
   return useContractMultichain<NonfungiblePositionManager>(V3NFT_ADDRESSES, NFTPositionManagerJSON.abi, chainIds)
 }
 
-export function useInterfaceMulticallContracts(chainIds: ChainId[]): ContractMap<UniswapInterfaceMulticall> {
+export function useInterfaceMulticallContracts(chainIds: SupportedChainId[]): ContractMap<UniswapInterfaceMulticall> {
   return useContractMultichain<UniswapInterfaceMulticall>(MULTICALL_ADDRESSES, MulticallJSON.abi, chainIds)
 }
 

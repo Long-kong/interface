@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro'
-import { ChainId } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import { showTestnetsAtom } from 'components/AccountDrawer/TestnetsToggle'
 import { BaseButton } from 'components/Button'
@@ -10,6 +9,7 @@ import { ConnectionType } from 'connection/types'
 import { WalletConnectV2 } from 'connection/WalletConnectV2'
 import { getChainInfo } from 'constants/chainInfo'
 import { getChainPriority, L1_CHAIN_IDS, L2_CHAIN_IDS, TESTNET_CHAIN_IDS } from 'constants/chains'
+import { SupportedChainId } from 'constants/types'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import useSelectChain from 'hooks/useSelectChain'
 import useSyncChainQuery from 'hooks/useSyncChainQuery'
@@ -47,7 +47,7 @@ const ChainSelectorButton = styled(BaseButton)<{ isOpen: boolean }>`
   }
 `
 
-function useWalletSupportedChains(): ChainId[] {
+function useWalletSupportedChains(): SupportedChainId[] {
   const { connector } = useWeb3React()
   const connectionType = getConnection(connector).type
 
@@ -84,7 +84,7 @@ export const ChainSelector = ({ leftAlign }: { leftAlign?: boolean }) => {
           }
           return acc
         },
-        { supported: [], unsupported: [] } as Record<string, ChainId[]>
+        { supported: [], unsupported: [] } as Record<string, SupportedChainId[]>
       )
     return [supported, unsupported]
   }, [showTestnets, walletSupportsChain])
@@ -98,10 +98,10 @@ export const ChainSelector = ({ leftAlign }: { leftAlign?: boolean }) => {
   const selectChain = useSelectChain()
   useSyncChainQuery()
 
-  const [pendingChainId, setPendingChainId] = useState<ChainId | undefined>(undefined)
+  const [pendingChainId, setPendingChainId] = useState<SupportedChainId | undefined>(undefined)
 
   const onSelectChain = useCallback(
-    async (targetChainId: ChainId) => {
+    async (targetChainId: SupportedChainId) => {
       setPendingChainId(targetChainId)
       await selectChain(targetChainId)
       setPendingChainId(undefined)

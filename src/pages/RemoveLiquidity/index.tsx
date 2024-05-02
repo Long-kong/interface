@@ -2,10 +2,8 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import type { TransactionResponse } from '@ethersproject/providers'
 import { Trans } from '@lingui/macro'
-import { BrowserEvent, InterfaceElementName, InterfaceEventName, LiquidityEventName } from '@uniswap/analytics-events'
 import { Currency, Percent } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
-import { sendAnalyticsEvent, TraceEvent, useTrace } from 'analytics'
 import { useToggleAccountDrawer } from 'components/AccountDrawer'
 import { V2Unsupported } from 'components/V2Unsupported'
 import { isSupportedChain } from 'constants/chains'
@@ -69,7 +67,6 @@ function RemoveLiquidity() {
   const [tokenA, tokenB] = useMemo(() => [currencyA?.wrapped, currencyB?.wrapped], [currencyA, currencyB])
 
   const theme = useTheme()
-  const trace = useTrace()
 
   // toggle wallet when disconnected
   const toggleWalletDrawer = useToggleAccountDrawer()
@@ -123,18 +120,18 @@ function RemoveLiquidity() {
     const liquidityAmount = parsedAmounts[Field.LIQUIDITY]
     if (!liquidityAmount) throw new Error('missing liquidity amount')
 
-    if (gatherPermitSignature) {
-      try {
-        await gatherPermitSignature()
-      } catch (error) {
-        // try to approve if gatherPermitSignature failed for any reason other than the user rejecting it
-        if (error?.code !== 4001) {
-          await approveCallback()
-        }
-      }
-    } else {
-      await approveCallback()
-    }
+    // if (gatherPermitSignature) {
+    //   try {
+    //     await gatherPermitSignature()
+    //   } catch (error) {
+    //     // try to approve if gatherPermitSignature failed for any reason other than the user rejecting it
+    //     if (error?.code !== 4001) {
+    //       await approveCallback()
+    //     }
+    //   }
+    // } else {
+    await approveCallback()
+    // }
   }
 
   // wrapped onUserInput to clear signatures
@@ -219,7 +216,7 @@ function RemoveLiquidity() {
     else if (signatureData !== null) {
       // removeLiquidityETHWithPermit
       if (oneCurrencyIsETH) {
-        methodNames = ['removeLiquidityETHWithPermit', 'removeLiquidityETHWithPermitSupportingFeeOnTransferTokens']
+        methodNames = ['removeLiquidityETHWithPermit' /*, 'removeLiquidityETHWithPermitSupportingFeeOnTransferTokens'*/]
         args = [
           currencyBIsETH ? tokenA.address : tokenB.address,
           liquidityAmount.quotient.toString(),
@@ -292,11 +289,6 @@ function RemoveLiquidity() {
           })
 
           setTxHash(response.hash)
-
-          sendAnalyticsEvent(LiquidityEventName.REMOVE_LIQUIDITY_SUBMITTED, {
-            label: [currencyA.symbol, currencyB.symbol].join('/'),
-            ...trace,
-          })
         })
         .catch((error: Error) => {
           setAttemptingTxn(false)
@@ -644,16 +636,9 @@ function RemoveLiquidity() {
             )}
             <div style={{ position: 'relative' }}>
               {!account ? (
-                <TraceEvent
-                  events={[BrowserEvent.onClick]}
-                  name={InterfaceEventName.CONNECT_WALLET_BUTTON_CLICKED}
-                  properties={{ received_swap_quote: false }}
-                  element={InterfaceElementName.CONNECT_WALLET_BUTTON}
-                >
-                  <ButtonLight onClick={toggleWalletDrawer}>
-                    <Trans>Connect wallet</Trans>
-                  </ButtonLight>
-                </TraceEvent>
+                <ButtonLight onClick={toggleWalletDrawer}>
+                  <Trans>Connect wallet</Trans>
+                </ButtonLight>
               ) : (
                 <RowBetween>
                   <ButtonConfirmed

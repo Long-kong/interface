@@ -1,5 +1,4 @@
 import { Trans } from '@lingui/macro'
-import { ChainId } from '@uniswap/sdk-core'
 import { useOpenOffchainActivityModal } from 'components/AccountDrawer/MiniPortfolio/Activity/OffchainActivityModal'
 import { signatureToActivity, transactionToActivity } from 'components/AccountDrawer/MiniPortfolio/Activity/parseLocal'
 import { Activity } from 'components/AccountDrawer/MiniPortfolio/Activity/types'
@@ -9,6 +8,7 @@ import Column, { AutoColumn } from 'components/Column'
 import AlertTriangleFilled from 'components/Icons/AlertTriangleFilled'
 import { AutoRow } from 'components/Row'
 import { getChainInfo } from 'constants/chainInfo'
+import { SupportedChainId } from 'constants/types'
 import { TransactionStatus } from 'graphql/data/__generated__/types-and-hooks'
 import { useAllTokensMultichain } from 'hooks/Tokens'
 import useENSName from 'hooks/useENSName'
@@ -65,7 +65,7 @@ const PopupAlertTriangle = styled(AlertTriangleFilled)`
   height: 32px;
 `
 
-export function FailedNetworkSwitchPopup({ chainId, onClose }: { chainId: ChainId; onClose: () => void }) {
+export function FailedNetworkSwitchPopup({ chainId, onClose }: { chainId: SupportedChainId; onClose: () => void }) {
   const chainInfo = getChainInfo(chainId)
 
   return (
@@ -132,7 +132,7 @@ export function TransactionPopupContent({
   hash,
   onClose,
 }: {
-  chainId: ChainId
+  chainId: SupportedChainId
   hash: string
   onClose: () => void
 }) {

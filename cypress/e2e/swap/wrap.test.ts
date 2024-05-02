@@ -1,8 +1,9 @@
-import { ChainId, CurrencyAmount, WETH9 } from '@uniswap/sdk-core'
+import { CurrencyAmount, WETH9 } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/types'
 
 import { getBalance, getTestSelector } from '../../utils'
 
-const WETH = WETH9[ChainId.MAINNET]
+const WETH = WETH9[SupportedChainId.MAINNET]
 
 describe('Swap wrap', () => {
   beforeEach(() => {

@@ -1,5 +1,5 @@
-import { ChainId } from '@uniswap/sdk-core'
 import { USDC_MAINNET } from 'constants/tokens'
+import { SupportedChainId } from 'constants/types'
 import { usdcWethPoolAddress, validPoolToken0, validPoolToken1 } from 'test-utils/pools/fixtures'
 import { render, screen } from 'test-utils/render'
 
@@ -10,7 +10,7 @@ describe('PoolDetailsHeader', () => {
     const { asFragment } = render(
       <PoolDetailsLink
         address={usdcWethPoolAddress}
-        chainId={ChainId.MAINNET}
+        chainId={SupportedChainId.MAINNET}
         tokens={[validPoolToken0, validPoolToken1]}
       />
     )
@@ -24,7 +24,7 @@ describe('PoolDetailsHeader', () => {
 
   it('renders link for token address', async () => {
     const { asFragment } = render(
-      <PoolDetailsLink address={USDC_MAINNET.address} chainId={ChainId.MAINNET} tokens={[validPoolToken0]} />
+      <PoolDetailsLink address={USDC_MAINNET.address} chainId={SupportedChainId.MAINNET} tokens={[validPoolToken0]} />
     )
     expect(asFragment()).toMatchSnapshot()
 

@@ -1,27 +1,20 @@
-import { Trans } from '@lingui/macro'
-import { useWeb3React } from '@web3-react/core'
+import KongLogo from 'assets/svg/kong_white.svg'
 import { useAccountDrawer } from 'components/AccountDrawer'
 import Web3Status from 'components/Web3Status'
-import { useInfoExplorePageEnabled } from 'featureFlags/flags/infoExplore'
-import { chainIdToBackendName } from 'graphql/data/util'
-import { useDisableNFTRoutes } from 'hooks/useDisableNFTRoutes'
 import { useIsNftPage } from 'hooks/useIsNftPage'
 import { useIsPoolsPage } from 'hooks/useIsPoolsPage'
 import { Box } from 'nft/components/Box'
 import { Row } from 'nft/components/Flex'
-import { UniIcon } from 'nft/components/icons'
 import { useProfilePageState } from 'nft/hooks'
 import { ProfilePageStateType } from 'nft/types'
 import { ReactNode, useCallback } from 'react'
 import { NavLink, NavLinkProps, useLocation, useNavigate } from 'react-router-dom'
+import { useToggleAffiliatesModal, useToggleSellModal } from 'state/application/hooks'
 import styled from 'styled-components'
 
 import { useIsNavSearchInputVisible } from '../../nft/hooks/useIsNavSearchInputVisible'
 import { Bag } from './Bag'
 import Blur from './Blur'
-import { ChainSelector } from './ChainSelector'
-import { MenuDropdown } from './MenuDropdown'
-import { SearchBar } from './SearchBar'
 import * as styles from './style.css'
 
 const Nav = styled.nav`
@@ -29,6 +22,28 @@ const Nav = styled.nav`
   width: 100%;
   height: ${({ theme }) => theme.navHeight}px;
   z-index: 2;
+`
+
+const WhiteLogo = styled.img<{ height?: number | string; width?: number | string }>`
+  height: ${({ height }) => (height ? height + 'px' : '100%')};
+  width: ${({ width }) => (width ? width + 'px' : 'auto')};
+  cursor: pointer;
+`
+const NoLink = styled.span`
+  text-align: center;
+  cursor: pointer;
+  color: ${({ theme }) => theme.neutral2};
+  padding-right: 14px;
+  padding-left: 14px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  transition: 250ms;
+  border-radius: 14px;
+  &:hover {
+    background: #99a1bd14;
+  }
 `
 
 interface MenuItemProps {
@@ -45,7 +60,7 @@ const MenuItem = ({ href, dataTestId, id, isActive, children }: MenuItemProps) =
       to={href}
       className={isActive ? styles.activeMenuItem : styles.menuItem}
       id={id}
-      style={{ textDecoration: 'none' }}
+      style={{ textDecoration: 'none', whiteSpace: 'nowrap' }}
       data-testid={dataTestId}
     >
       {children}
@@ -55,42 +70,24 @@ const MenuItem = ({ href, dataTestId, id, isActive, children }: MenuItemProps) =
 
 export const PageTabs = () => {
   const { pathname } = useLocation()
-  const { chainId: connectedChainId } = useWeb3React()
-  const chainName = chainIdToBackendName(connectedChainId)
-
   const isPoolActive = useIsPoolsPage()
-  const isNftPage = useIsNftPage()
 
-  const shouldDisableNFTRoutes = useDisableNFTRoutes()
-  const infoExplorePageEnabled = useInfoExplorePageEnabled()
+  const toggleShowSellPopup = useToggleSellModal()
+  const toggleShowAffiliatesPopup = useToggleAffiliatesModal()
 
   return (
     <>
-      <MenuItem href="/swap" isActive={pathname.startsWith('/swap')}>
-        <Trans>Swap</Trans>
+      <MenuItem href="/" isActive={pathname.endsWith('/')}>
+        Home
       </MenuItem>
-      {infoExplorePageEnabled ? (
-        <MenuItem href={`/explore/tokens/${chainName.toLowerCase()}`} isActive={pathname.startsWith('/explore')}>
-          <Trans>Explore</Trans>
-        </MenuItem>
-      ) : (
-        <MenuItem href={`/tokens/${chainName.toLowerCase()}`} isActive={pathname.startsWith('/tokens')}>
-          <Trans>Tokens</Trans>
-        </MenuItem>
-      )}
-      {!shouldDisableNFTRoutes && (
-        <MenuItem dataTestId="nft-nav" href="/nfts" isActive={isNftPage}>
-          <Trans>NFTs</Trans>
-        </MenuItem>
-      )}
-      <Box display={{ sm: 'flex', lg: 'none', xxl: 'flex' }} width="full">
-        <MenuItem href="/pools" dataTestId="pool-nav-link" isActive={isPoolActive}>
-          <Trans>Pools</Trans>
-        </MenuItem>
-      </Box>
-      <Box marginY="4">
-        <MenuDropdown />
-      </Box>
+      <MenuItem href="/swap" isActive={pathname.startsWith('/swap')}>
+        Buy
+      </MenuItem>
+      <NoLink onClick={toggleShowSellPopup}>Sell</NoLink>
+      <MenuItem href="/add/v2/ETH" dataTestId="pool-nav-link" isActive={isPoolActive}>
+        Add Liquidity
+      </MenuItem>
+      <NoLink onClick={toggleShowAffiliatesPopup}>Leaderboard</NoLink>
     </>
   )
 }
@@ -109,7 +106,7 @@ const Navbar = ({ blur }: { blur: boolean }) => {
     }
     navigate({
       pathname: '/',
-      search: '?intro=true',
+      // search: '?intro=true',
     })
   }, [accountDrawerOpen, navigate, toggleAccountDrawer])
 
@@ -120,19 +117,20 @@ const Navbar = ({ blur }: { blur: boolean }) => {
         <Box display="flex" height="full" flexWrap="nowrap">
           <Box className={styles.leftSideContainer}>
             <Box className={styles.logoContainer}>
-              <UniIcon
+              {/* <WhiteLogo src={KongLogo} width="auto" height="48" className={styles.logo} onClick={handleUniIconClick} /> */}
+              {/* <UniIcon
                 width="48"
                 height="48"
                 data-testid="uniswap-logo"
                 className={styles.logo}
                 onClick={handleUniIconClick}
-              />
+              /> */}
             </Box>
-            {!isNftPage && (
+            {/* {!isNftPage && (
               <Box display={{ sm: 'flex', lg: 'none' }}>
                 <ChainSelector leftAlign={true} />
               </Box>
-            )}
+            )} */}
             <Row display={{ sm: 'none', lg: 'flex' }}>
               <PageTabs />
             </Row>
@@ -143,19 +141,20 @@ const Navbar = ({ blur }: { blur: boolean }) => {
               display: 'flex',
             })}
           >
-            <SearchBar />
+            <WhiteLogo src={KongLogo} onClick={handleUniIconClick} />
+            {/* <SearchBar /> */}
           </Box>
           <Box className={styles.rightSideContainer}>
             <Row gap="12">
               <Box position="relative" display={isNavSearchInputVisible ? 'none' : { sm: 'flex' }}>
-                <SearchBar />
+                {/* <SearchBar /> */}
               </Box>
               {isNftPage && sellPageState !== ProfilePageStateType.LISTING && <Bag />}
-              {!isNftPage && (
+              {/* {!isNftPage && (
                 <Box display={{ sm: 'none', lg: 'flex' }}>
                   <ChainSelector />
                 </Box>
-              )}
+              )} */}
 
               <Web3Status />
             </Row>

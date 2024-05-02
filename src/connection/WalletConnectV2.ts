@@ -1,7 +1,7 @@
-import { ChainId } from '@uniswap/sdk-core'
 import { URI_AVAILABLE, WalletConnect, WalletConnectConstructorArgs } from '@web3-react/walletconnect-v2'
 import { sendAnalyticsEvent } from 'analytics'
 import { L1_CHAIN_IDS, L2_CHAIN_IDS } from 'constants/chains'
+import { SupportedChainId } from 'constants/types'
 import { Z_INDEX } from 'theme/zIndex'
 import { isIOS } from 'utils/userAgent'
 
@@ -70,7 +70,7 @@ export class UniwalletConnect extends WalletConnectV2 {
 
   constructor({ actions, onError }: Omit<WalletConnectConstructorArgs, 'options'>) {
     // disables walletconnect's proprietary qr code modal; instead UniwalletModal will listen for events to trigger our custom modal
-    super({ actions, defaultChainId: ChainId.MAINNET, qrcode: false, onError })
+    super({ actions, defaultChainId: SupportedChainId.MAINNET, qrcode: false, onError })
 
     this.events.once(URI_AVAILABLE, () => {
       this.provider?.events.on('disconnect', this.deactivate)

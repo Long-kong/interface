@@ -1,9 +1,7 @@
 import { Trans } from '@lingui/macro'
-import { BrowserEvent, InterfaceElementName, SwapEventName } from '@uniswap/analytics-events'
 import { Currency, CurrencyAmount, Percent } from '@uniswap/sdk-core'
 import { Pair } from '@uniswap/v2-sdk'
 import { useWeb3React } from '@web3-react/core'
-import { TraceEvent } from 'analytics'
 import { AutoColumn } from 'components/Column'
 import { LoadingOpacityContainer, loadingOpacityMixin } from 'components/Loader/styled'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
@@ -219,7 +217,9 @@ interface SwapCurrencyInputPanelProps {
   value: string
   onUserInput: (value: string) => void
   onMax?: () => void
+  onClaimAll?: () => void
   showMaxButton: boolean
+  showClaimAllButton: boolean
   label: ReactNode
   onCurrencySelect?: (currency: Currency) => void
   currency?: Currency | null
@@ -250,7 +250,9 @@ const SwapCurrencyInputPanel = forwardRef<HTMLInputElement, SwapCurrencyInputPan
       value,
       onUserInput,
       onMax,
+      onClaimAll,
       showMaxButton,
+      showClaimAllButton,
       onCurrencySelect,
       currency,
       otherCurrency,
@@ -388,6 +390,9 @@ const SwapCurrencyInputPanel = forwardRef<HTMLInputElement, SwapCurrencyInputPan
                 </LoadingOpacityContainer>
                 {account ? (
                   <RowFixed style={{ height: '16px' }}>
+                    {showClaimAllButton && selectedCurrencyBalance ? (
+                      <StyledBalanceMax onClick={onClaimAll}>Claim All Bonus</StyledBalanceMax>
+                    ) : null}
                     <ThemedText.DeprecatedBody
                       data-testid="balance-text"
                       color={theme.neutral2}
@@ -410,15 +415,9 @@ const SwapCurrencyInputPanel = forwardRef<HTMLInputElement, SwapCurrencyInputPan
                       ) : null}
                     </ThemedText.DeprecatedBody>
                     {showMaxButton && selectedCurrencyBalance ? (
-                      <TraceEvent
-                        events={[BrowserEvent.onClick]}
-                        name={SwapEventName.SWAP_MAX_TOKEN_AMOUNT_SELECTED}
-                        element={InterfaceElementName.MAX_TOKEN_AMOUNT_BUTTON}
-                      >
-                        <StyledBalanceMax onClick={onMax}>
-                          <Trans>Max</Trans>
-                        </StyledBalanceMax>
-                      </TraceEvent>
+                      <StyledBalanceMax onClick={onMax}>
+                        <Trans>Max</Trans>
+                      </StyledBalanceMax>
                     ) : null}
                   </RowFixed>
                 ) : (

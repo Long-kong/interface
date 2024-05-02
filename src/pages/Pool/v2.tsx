@@ -16,7 +16,7 @@ import { ExternalLink, HideSmall, ThemedText } from 'theme/components'
 import { ButtonOutlined, ButtonPrimary, ButtonSecondary } from '../../components/Button'
 import Card from '../../components/Card'
 import { AutoColumn } from '../../components/Column'
-import { CardBGImage, CardNoise, CardSection, DataCard } from '../../components/earn/styled'
+import { CardBGImage, CardNoise, DataCard } from '../../components/earn/styled'
 import FullPositionCard from '../../components/PositionCard'
 import { RowBetween, RowFixed } from '../../components/Row'
 import { Dots } from '../../components/swap/styled'
@@ -75,6 +75,8 @@ const ResponsiveButtonSecondary = styled(ButtonSecondary)`
   ${({ theme }) => theme.deprecated_mediaWidth.deprecated_upToSmall`
     width: 48%;
   `};
+  color: #fff;
+  border-color: #fff;
 `
 
 const EmptyProposals = styled.div`
@@ -146,7 +148,7 @@ export default function Pool() {
           <LPFeeExplainer>
             <CardBGImage />
             <CardNoise />
-            <CardSection>
+            {/* <CardSection>
               <AutoColumn gap="md">
                 <RowBetween>
                   <ThemedText.DeprecatedWhite fontWeight={535}>
@@ -171,7 +173,7 @@ export default function Pool() {
                   </ThemedText.DeprecatedWhite>
                 </ExternalLink>
               </AutoColumn>
-            </CardSection>
+            </CardSection> */}
             <CardBGImage />
             <CardNoise />
           </LPFeeExplainer>

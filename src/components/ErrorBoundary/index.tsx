@@ -23,6 +23,7 @@ const BodyWrapper = styled.div<{ margin?: string }>`
   max-width: 500px;
   margin: auto;
   padding: 1rem;
+  position: relative;
 `
 
 const SmallButtonLight = styled(ButtonLight)`

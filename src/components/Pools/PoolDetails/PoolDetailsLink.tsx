@@ -1,9 +1,9 @@
 import { Trans } from '@lingui/macro'
-import { ChainId } from '@uniswap/sdk-core'
 import { EtherscanLogo } from 'components/Icons/Etherscan'
 import { ExplorerIcon } from 'components/Icons/ExplorerIcon'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import Row from 'components/Row'
+import { SupportedChainId } from 'constants/types'
 import { useInfoExplorePageEnabled } from 'featureFlags/flags/infoExplore'
 import { chainIdToBackendName, getTokenDetailsURL } from 'graphql/data/util'
 import { Token } from 'graphql/thegraph/__generated__/types-and-hooks'
@@ -151,7 +151,7 @@ export function PoolDetailsLink({ address, chainId, tokens, loading }: PoolDetai
         {explorerUrl && (
           <ExternalLink href={explorerUrl} data-testid={`explorer-url-${explorerUrl}`}>
             <ExplorerWrapper>
-              {chainId === ChainId.MAINNET ? (
+              {chainId === SupportedChainId.MAINNET ? (
                 <EtherscanLogo width="16px" height="16px" fill={theme.neutral2} />
               ) : (
                 <ExplorerIcon width="16px" height="16px" stroke={theme.darkMode ? 'none' : theme.neutral2} />

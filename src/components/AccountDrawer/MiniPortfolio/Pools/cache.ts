@@ -1,5 +1,6 @@
-import { ChainId, Token } from '@uniswap/sdk-core'
+import { Token } from '@uniswap/sdk-core'
 import { Pool, Position } from '@uniswap/v3-sdk'
+import { SupportedChainId } from 'constants/types'
 import { useAllTokensMultichain } from 'hooks/Tokens'
 import { atom, useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
@@ -15,7 +16,7 @@ import { useInterfaceMulticallContracts } from './hooks'
 
 export type PositionInfo = {
   owner: string
-  chainId: ChainId
+  chainId: SupportedChainId
   position: Position
   pool: Pool
   details: PositionDetails
@@ -58,7 +59,7 @@ export function useCachedPositions(account: string): UseCachedPositionsReturnTyp
   return [cachedPositions[account], setPositionsAndStaleTimeout]
 }
 
-const poolAddressKey = (details: PositionDetails, chainId: ChainId) =>
+const poolAddressKey = (details: PositionDetails, chainId: SupportedChainId) =>
   `${chainId}-${details.token0}-${details.token1}-${details.fee}`
 
 type PoolAddressMap = { [key: string]: string | undefined }
@@ -70,11 +71,11 @@ const poolAddressCacheAtom = atomWithStorage<PoolAddressMap>('poolCache', {})
 export function usePoolAddressCache() {
   const [cache, updateCache] = useAtom(poolAddressCacheAtom)
   const get = useCallback(
-    (details: PositionDetails, chainId: ChainId) => cache[poolAddressKey(details, chainId)],
+    (details: PositionDetails, chainId: SupportedChainId) => cache[poolAddressKey(details, chainId)],
     [cache]
   )
   const set = useCallback(
-    (details: PositionDetails, chainId: ChainId, address: string) =>
+    (details: PositionDetails, chainId: SupportedChainId, address: string) =>
       updateCache((c) => ({ ...c, [poolAddressKey(details, chainId)]: address })),
     [updateCache]
   )
@@ -103,8 +104,8 @@ function useTokenCache() {
   return { get, set }
 }
 
-type TokenGetterFn = (addresses: string[], chainId: ChainId) => Promise<{ [key: string]: Token | undefined }>
-export function useGetCachedTokens(chains: ChainId[]): TokenGetterFn {
+type TokenGetterFn = (addresses: string[], chainId: SupportedChainId) => Promise<{ [key: string]: Token | undefined }>
+export function useGetCachedTokens(chains: SupportedChainId[]): TokenGetterFn {
   const allTokens = useAllTokensMultichain()
   const multicallContracts = useInterfaceMulticallContracts(chains)
   const tokenCache = useTokenCache()

@@ -1,6 +1,7 @@
-import { ChainId, Token, TradeType as MockTradeType } from '@uniswap/sdk-core'
+import { Token, TradeType as MockTradeType } from '@uniswap/sdk-core'
 import { PERMIT2_ADDRESS } from '@uniswap/universal-router-sdk'
 import { DAI as MockDAI, nativeOnChain, USDC_MAINNET as MockUSDC_MAINNET, USDT as MockUSDT } from 'constants/tokens'
+import { SupportedChainId } from 'constants/types'
 import { TransactionStatus as MockTxStatus } from 'graphql/data/__generated__/types-and-hooks'
 import { ChainTokenMap } from 'hooks/Tokens'
 import {
@@ -51,7 +52,7 @@ function mockSwapInfo(
 
 const mockAccount1 = '0x000000000000000000000000000000000000000001'
 const mockAccount2 = '0x000000000000000000000000000000000000000002'
-const mockChainId = ChainId.MAINNET
+const mockChainId = SupportedChainId.MAINNET
 const mockSpenderAddress = PERMIT2_ADDRESS[mockChainId]
 const mockCurrencyAmountRaw = '1000000000000000000'
 const mockCurrencyAmountRawUSDC = '1000000'
@@ -253,7 +254,7 @@ describe('parseLocalActivity', () => {
         status: 1,
       },
     } as TransactionDetails
-    const chainId = ChainId.MAINNET
+    const chainId = SupportedChainId.MAINNET
     expect(transactionToActivity(details, chainId, mockTokenAddressMap, formatNumber)).toEqual({
       chainId: 1,
       currencies: [MockUSDC_MAINNET, MockDAI],
@@ -282,7 +283,7 @@ describe('parseLocalActivity', () => {
         status: 1,
       },
     } as TransactionDetails
-    const chainId = ChainId.MAINNET
+    const chainId = SupportedChainId.MAINNET
     expect(transactionToActivity(details, chainId, mockTokenAddressMap, formatNumber)).toMatchObject({
       chainId: 1,
       currencies: [MockUSDC_MAINNET, MockDAI],
@@ -308,7 +309,7 @@ describe('parseLocalActivity', () => {
         status: 1,
       },
     } as TransactionDetails
-    const chainId = ChainId.MAINNET
+    const chainId = SupportedChainId.MAINNET
     const tokens = {} as ChainTokenMap
     expect(transactionToActivity(details, chainId, tokens, formatNumber)).toMatchObject({
       chainId: 1,

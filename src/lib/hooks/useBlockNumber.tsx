@@ -1,6 +1,6 @@
-import { ChainId } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import { DEPRECATED_RPC_PROVIDERS, RPC_PROVIDERS } from 'constants/providers'
+import { SupportedChainId } from 'constants/types'
 import { useFallbackProviderEnabled } from 'featureFlags/flags/fallbackProvider'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
@@ -49,9 +49,13 @@ export function BlockNumberProvider({ children }: { children: ReactNode }) {
     setChainBlock((chainBlock) => {
       if (chainBlock.chainId === chainId) {
         if (!chainBlock.block || chainBlock.block < block) {
-          return { chainId, block, mainnetBlock: chainId === ChainId.MAINNET ? block : chainBlock.mainnetBlock }
+          return {
+            chainId,
+            block,
+            mainnetBlock: chainId === SupportedChainId.MAINNET ? block : chainBlock.mainnetBlock,
+          }
         }
-      } else if (chainId === ChainId.MAINNET) {
+      } else if (chainId === SupportedChainId.MAINNET) {
         if (!chainBlock.mainnetBlock || chainBlock.mainnetBlock < block) {
           return { ...chainBlock, mainnetBlock: block }
         }
@@ -97,10 +101,10 @@ export function BlockNumberProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (mainnetBlock === undefined) {
-      networkProviders[ChainId.MAINNET]
+      networkProviders[SupportedChainId.MAINNET]
         .getBlockNumber()
         .then((block) => {
-          onChainBlock(ChainId.MAINNET, block)
+          onChainBlock(SupportedChainId.MAINNET, block)
         })
         // swallow errors - it's ok if this fails, as we'll try again if we activate mainnet
         .catch(() => undefined)
@@ -114,7 +118,7 @@ export function BlockNumberProvider({ children }: { children: ReactNode }) {
           setChainBlock({
             chainId: activeChainId,
             block: update,
-            mainnetBlock: activeChainId === ChainId.MAINNET ? update : mainnetBlock,
+            mainnetBlock: activeChainId === SupportedChainId.MAINNET ? update : mainnetBlock,
           })
         }
       },

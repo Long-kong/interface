@@ -1,7 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { ChainId, Token, WETH9 } from '@uniswap/sdk-core'
+import { Token, WETH9 } from '@uniswap/sdk-core'
 import { FeeAmount, Pool } from '@uniswap/v3-sdk'
 import { USDC_MAINNET } from 'constants/tokens'
+import { SupportedChainId } from 'constants/types'
 import { useToken } from 'hooks/Tokens'
 import { PoolState } from 'hooks/usePools'
 import { usePool } from 'hooks/usePools'
@@ -25,7 +26,7 @@ beforeEach(() => {
     // tokenA: Token, tokenB: Token, fee: FeeAmount, sqrtRatioX96: BigintIsh, liquidity: BigintIsh, tickCurrent: number
     new Pool(
       USDC_MAINNET,
-      WETH9[ChainId.MAINNET],
+      WETH9[SupportedChainId.MAINNET],
       FeeAmount.MEDIUM,
       '1745948049099224684665158875285708',
       '4203610460178577802',
@@ -37,7 +38,7 @@ beforeEach(() => {
 test('PositionListItem should render a position', () => {
   const positionDetails = {
     token0: USDC_MAINNET.address,
-    token1: WETH9[ChainId.MAINNET].address,
+    token1: WETH9[SupportedChainId.MAINNET].address,
     tokenId: BigNumber.from(479689),
     fee: FeeAmount.MEDIUM,
     liquidity: BigNumber.from('1341008833950736'),

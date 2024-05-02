@@ -1,11 +1,11 @@
 import { Trans } from '@lingui/macro'
 import { InterfaceSectionName, NavBarSearchTypes } from '@uniswap/analytics-events'
-import { ChainId } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import { useTrace } from 'analytics'
 import clsx from 'clsx'
 import Badge from 'components/Badge'
 import { ChainLogo } from 'components/Logo/ChainLogo'
+import { SupportedChainId } from 'constants/types'
 import { HistoryDuration, SafetyLevel } from 'graphql/data/__generated__/types-and-hooks'
 import { useTrendingCollections } from 'graphql/data/nft/TrendingCollections'
 import { SearchToken } from 'graphql/data/SearchTokens'
@@ -355,9 +355,9 @@ function SearchBarDropdownContents({
   )
 }
 
-function ComingSoonText({ chainId }: { chainId: ChainId }) {
+function ComingSoonText({ chainId }: { chainId: SupportedChainId }) {
   switch (chainId) {
-    case ChainId.AVALANCHE:
+    case SupportedChainId.AVALANCHE:
       return <Trans>Coming soon: search and explore tokens on Avalanche Chain</Trans>
     default:
       return null

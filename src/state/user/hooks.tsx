@@ -11,6 +11,7 @@ import { RouterPreference } from 'state/routing/types'
 import { UserAddedToken } from 'types/tokens'
 
 import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from '../../constants/routing'
+import { SupportedChainId } from '../../constants/types'
 import { useDefaultActiveTokens } from '../../hooks/Tokens'
 import {
   addSerializedPair,
@@ -233,11 +234,16 @@ export function useUserOptedOutOfUniswapX(): boolean {
 export function toV2LiquidityToken([tokenA, tokenB]: [Token, Token]): Token {
   if (tokenA.chainId !== tokenB.chainId) throw new Error('Not matching chain IDs')
   if (tokenA.equals(tokenB)) throw new Error('Tokens cannot be equal')
-  if (!V2_FACTORY_ADDRESSES[tokenA.chainId]) throw new Error('No V2 factory address on this chain')
+  if (!V2_FACTORY_ADDRESSES[tokenA.chainId])
+    throw new Error('No V2 factory address on this chain')
 
   return new Token(
     tokenA.chainId,
-    computePairAddress({ factoryAddress: V2_FACTORY_ADDRESSES[tokenA.chainId], tokenA, tokenB }),
+    computePairAddress({
+      factoryAddress: V2_FACTORY_ADDRESSES[tokenA.chainId],
+      tokenA,
+      tokenB,
+    }),
     18,
     'UNI-V2',
     'Uniswap V2'

@@ -8,7 +8,7 @@ import { useIsDarkMode } from '../../theme/components/ThemeToggle'
 import { AutoColumn } from '../Column'
 
 export const PageWrapper = styled.div`
-  padding: 68px 8px 0px;
+  padding: 24px 8px 0px;
   max-width: 480px;
   width: 100%;
 
@@ -17,7 +17,7 @@ export const PageWrapper = styled.div`
   }
 
   @media only screen and (max-width: ${({ theme }) => `${theme.breakpoint.sm}px`}) {
-    padding-top: 20px;
+    // padding-top: 20px;
   }
 `
 

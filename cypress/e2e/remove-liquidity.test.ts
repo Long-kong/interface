@@ -1,6 +1,7 @@
-import { ChainId, MaxUint256, UNI_ADDRESSES } from '@uniswap/sdk-core'
+import { MaxUint256, UNI_ADDRESSES } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/types'
 
-const UNI_MAINNET = UNI_ADDRESSES[ChainId.MAINNET]
+const UNI_MAINNET = UNI_ADDRESSES[SupportedChainId.MAINNET]
 
 describe('Remove Liquidity', () => {
   it('loads the token pair in v2', () => {

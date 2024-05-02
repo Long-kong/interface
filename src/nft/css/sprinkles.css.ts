@@ -212,7 +212,7 @@ export const vars = createGlobalTheme(':root', {
     surface3_dark: '#FFFFFF1f',
     surface4_dark: '#FFFFFF33',
     surface5_dark: '#00000004',
-    accent1_dark: '#FC72FF',
+    accent1_dark: '#0637A5',
     accent2_dark: '#311C31',
     neutral1_light: '#222222',
     neutral2_light: '#7D7D7D',
@@ -226,6 +226,7 @@ export const vars = createGlobalTheme(':root', {
     accent2_light: '#FFEFFF',
     success: '#40B66B',
     critical: '#FF5F52',
+    warning: '#EEB317',
   },
   border: {
     transculent: '1.5px solid rgba(0, 0, 0, 0.1)',

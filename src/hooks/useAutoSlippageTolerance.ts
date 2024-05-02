@@ -5,12 +5,10 @@ import { Pool } from '@uniswap/v3-sdk'
 import { useWeb3React } from '@web3-react/core'
 import { SUPPORTED_GAS_ESTIMATE_CHAIN_IDS } from 'constants/chains'
 import { L2_CHAIN_IDS } from 'constants/chains'
-import JSBI from 'jsbi'
 import useNativeCurrency from 'lib/hooks/useNativeCurrency'
 import { useMemo } from 'react'
 import { ClassicTrade } from 'state/routing/types'
 
-import useGasPrice from './useGasPrice'
 import { useStablecoinAmountFromFiatValue } from './useStablecoinPrice'
 import { useUSDPrice } from './useUSDPrice'
 
@@ -80,15 +78,16 @@ export default function useClassicAutoSlippageTolerance(trade?: ClassicTrade): P
   const outputUSD = useUSDPrice(trade?.outputAmount)
   const outputDollarValue = useStablecoinAmountFromFiatValue(outputUSD.data)
 
-  const nativeGasPrice = useGasPrice()
-  const gasEstimate = guesstimateGas(trade)
+  // const nativeGasPrice = useGasPrice()
+  // const gasEstimate = guesstimateGas(trade)
   const gasEstimateUSD = useStablecoinAmountFromFiatValue(trade?.gasUseEstimateUSD) ?? null
   const nativeCurrency = useNativeCurrency(chainId)
 
-  const nativeGasCost =
-    nativeGasPrice && typeof gasEstimate === 'number'
-      ? JSBI.multiply(nativeGasPrice, JSBI.BigInt(gasEstimate))
-      : undefined
+  // const nativeGasCost =
+  //   nativeGasPrice && typeof gasEstimate === 'number'
+  //     ? JSBI.multiply(nativeGasPrice, JSBI.BigInt(gasEstimate))
+  //     : undefined
+  const nativeGasCost = undefined
   const gasCostUSD = useUSDPrice(
     trade && nativeCurrency && nativeGasCost ? CurrencyAmount.fromRawAmount(nativeCurrency, nativeGasCost) : undefined
   )

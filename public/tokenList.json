@@ -1,0 +1,33 @@
+{
+  "name": "Apes together strong",
+  "timestamp": "2023-10-06T18:14:24.006Z",
+  "version": {
+    "major": 5,
+    "minor": 11,
+    "patch": 0
+  },
+  "tags": {},
+  "logoURI": "ipfs://QmNa8mQkrNKp1WEEeGjFezDmDeodkWRevGFN8JCV7b4Xir",
+  "keywords": [
+    "kong",
+    "long kong"
+  ],
+  "tokens": [
+    {
+      "chainId": 1,
+      "address": "0xa47bDB758c729be848170094adb88118deFc6468",
+      "symbol": "KONG",
+      "name": "Kong",
+      "decimals": 0
+    }
+  ],
+  "tokenMap": {
+    "1_0xa47bDB758c729be848170094adb88118deFc6468": {
+      "chainId": 1,
+      "address": "0xa47bDB758c729be848170094adb88118deFc6468",
+      "symbol": "KONG",
+      "name": "Kong",
+      "decimals": 0
+    }
+  }
+}

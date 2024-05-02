@@ -1,5 +1,5 @@
-import { ChainId } from '@uniswap/sdk-core'
 import { START_BLOCKS } from 'constants/chainInfo'
+import { SupportedChainId } from 'constants/types'
 import gql from 'graphql-tag'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -25,7 +25,7 @@ const GET_BLOCKS = (timestamps: string[]) => {
  */
 export function useBlocksFromTimestamps(
   timestamps: number[],
-  chainId: ChainId
+  chainId: SupportedChainId
 ): {
   blocks?: {
     timestamp: string

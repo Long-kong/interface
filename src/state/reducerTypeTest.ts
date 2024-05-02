@@ -1,7 +1,7 @@
-import { ChainId } from '@uniswap/sdk-core'
 import { TokenList } from '@uniswap/token-lists'
 import { ConnectionType } from 'connection/types'
 import { SupportedLocale } from 'constants/locales'
+import { SupportedChainId } from 'constants/types'
 import multicall from 'lib/state/multicall'
 import { CombinedState } from 'redux'
 import { assert, Equals } from 'tsafe'
@@ -129,7 +129,7 @@ assert<Equals<ApplicationState, ExpectedApplicationState>>()
 
 interface ExpectedWalletState {
   connectedWallets: Wallet[]
-  switchingChain: ChainId | false
+  switchingChain: SupportedChainId | false
 }
 
 assert<Equals<WalletState, ExpectedWalletState>>()

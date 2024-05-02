@@ -4,8 +4,10 @@ import { Z_INDEX } from 'theme/zIndex'
 
 import { useAccountDrawer } from '../AccountDrawer'
 import { AutoColumn } from '../Column'
-import ClaimPopup from './ClaimPopup'
-import PopupItem from './PopupItem'
+import AffiliatesPopup from './AffiliatesPopup'
+import AnnouncementsPopup from './AnnouncementsPopup'
+import ReferralPopup from './ReferralPopup'
+import SellPopup from './SellPopup'
 
 const MobilePopupWrapper = styled.div`
   position: relative;
@@ -44,9 +46,9 @@ const FixedPopupColumn = styled(AutoColumn)<{
   z-index: ${Z_INDEX.modal};
   transition: ${({ theme }) => `top ${theme.transition.timing.inOut} ${theme.transition.duration.slow}`};
 
-  ${({ theme }) => theme.deprecated_mediaWidth.deprecated_upToSmall`
-    display: none;
-  `};
+  // ${({ theme }) => theme.deprecated_mediaWidth.deprecated_upToSmall`
+  //   display: none;
+  // `};
 `
 
 export default function Popups() {
@@ -58,12 +60,16 @@ export default function Popups() {
   return (
     <>
       <FixedPopupColumn gap="20px" drawerOpen={isAccountDrawerOpen} data-testid="popups">
-        <ClaimPopup />
-        {activePopups.map((item) => (
+        <ReferralPopup />
+        <AnnouncementsPopup />
+        <SellPopup />
+        <AffiliatesPopup />
+        {/* <ClaimPopup /> */}
+        {/* {activePopups.map((item) => (
           <PopupItem key={item.key} content={item.content} popKey={item.key} removeAfterMs={item.removeAfterMs} />
-        ))}
+        ))} */}
       </FixedPopupColumn>
-      {activePopups?.length > 0 && (
+      {/* {activePopups?.length > 0 && (
         <MobilePopupWrapper data-testid="popups">
           <MobilePopupInner>
             {activePopups // reverse so new items up front
@@ -74,7 +80,7 @@ export default function Popups() {
               ))}
           </MobilePopupInner>
         </MobilePopupWrapper>
-      )}
+      )} */}
     </>
   )
 }

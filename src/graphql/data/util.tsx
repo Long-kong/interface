@@ -1,8 +1,9 @@
 import { QueryResult } from '@apollo/client'
 import * as Sentry from '@sentry/react'
-import { ChainId, Currency, Token } from '@uniswap/sdk-core'
+import { Currency, Token } from '@uniswap/sdk-core'
 import { AVERAGE_L1_BLOCK_TIME } from 'constants/chainInfo'
 import { NATIVE_CHAIN_ID, nativeOnChain, WRAPPED_NATIVE_CURRENCY } from 'constants/tokens'
+import { SupportedChainId } from 'constants/types'
 import ms from 'ms'
 import { useEffect } from 'react'
 import { getNativeTokenDBAddress } from 'utils/nativeTokens'
@@ -74,29 +75,35 @@ const UX_SUPPORTED_GQL_CHAINS = [...GQL_MAINNET_CHAINS, ...GQL_TESTNET_CHAINS] a
 export type InterfaceGqlChain = (typeof UX_SUPPORTED_GQL_CHAINS)[number]
 
 export const CHAIN_ID_TO_BACKEND_NAME: { [key: number]: InterfaceGqlChain } = {
-  [ChainId.MAINNET]: Chain.Ethereum,
-  [ChainId.GOERLI]: Chain.EthereumGoerli,
-  [ChainId.SEPOLIA]: Chain.EthereumSepolia,
-  [ChainId.POLYGON]: Chain.Polygon,
-  [ChainId.POLYGON_MUMBAI]: Chain.Polygon,
-  [ChainId.CELO]: Chain.Celo,
-  [ChainId.CELO_ALFAJORES]: Chain.Celo,
-  [ChainId.ARBITRUM_ONE]: Chain.Arbitrum,
-  [ChainId.ARBITRUM_GOERLI]: Chain.Arbitrum,
-  [ChainId.OPTIMISM]: Chain.Optimism,
-  [ChainId.OPTIMISM_GOERLI]: Chain.Optimism,
-  [ChainId.BNB]: Chain.Bnb,
-  [ChainId.AVALANCHE]: Chain.Avalanche,
-  [ChainId.BASE]: Chain.Base,
+  [SupportedChainId.MAINNET]: Chain.Ethereum,
+  [SupportedChainId.GOERLI]: Chain.EthereumGoerli,
+  [SupportedChainId.SEPOLIA]: Chain.EthereumSepolia,
+  [SupportedChainId.POLYGON]: Chain.Polygon,
+  [SupportedChainId.POLYGON_MUMBAI]: Chain.Polygon,
+  [SupportedChainId.CELO]: Chain.Celo,
+  [SupportedChainId.CELO_ALFAJORES]: Chain.Celo,
+  [SupportedChainId.ARBITRUM_ONE]: Chain.Arbitrum,
+  [SupportedChainId.ARBITRUM_GOERLI]: Chain.Arbitrum,
+  [SupportedChainId.OPTIMISM]: Chain.Optimism,
+  [SupportedChainId.OPTIMISM_GOERLI]: Chain.Optimism,
+  [SupportedChainId.BNB]: Chain.Bnb,
+  [SupportedChainId.AVALANCHE]: Chain.Avalanche,
+  [SupportedChainId.BASE]: Chain.Base,
 }
 
 export function chainIdToBackendName(chainId: number | undefined) {
   return chainId && CHAIN_ID_TO_BACKEND_NAME[chainId]
     ? CHAIN_ID_TO_BACKEND_NAME[chainId]
-    : CHAIN_ID_TO_BACKEND_NAME[ChainId.MAINNET]
+    : CHAIN_ID_TO_BACKEND_NAME[SupportedChainId.MAINNET]
 }
 
-const GQL_CHAINS = [ChainId.MAINNET, ChainId.OPTIMISM, ChainId.POLYGON, ChainId.ARBITRUM_ONE, ChainId.CELO] as const
+const GQL_CHAINS = [
+  SupportedChainId.MAINNET,
+  SupportedChainId.OPTIMISM,
+  SupportedChainId.POLYGON,
+  SupportedChainId.ARBITRUM_ONE,
+  SupportedChainId.CELO,
+] as const
 type GqlChainsType = (typeof GQL_CHAINS)[number]
 
 export function isGqlSupportedChain(chainId: number | undefined): chainId is GqlChainsType {
@@ -153,26 +160,26 @@ export function validateUrlChainParam(chainName: string | undefined) {
   return isValidBackEndChain ? URL_CHAIN_PARAM_TO_BACKEND[chainName] : Chain.Ethereum
 }
 
-const CHAIN_NAME_TO_CHAIN_ID: { [key in InterfaceGqlChain]: ChainId } = {
-  [Chain.Ethereum]: ChainId.MAINNET,
-  [Chain.EthereumGoerli]: ChainId.GOERLI,
-  [Chain.EthereumSepolia]: ChainId.SEPOLIA,
-  [Chain.Polygon]: ChainId.POLYGON,
-  [Chain.Celo]: ChainId.CELO,
-  [Chain.Optimism]: ChainId.OPTIMISM,
-  [Chain.Arbitrum]: ChainId.ARBITRUM_ONE,
-  [Chain.Bnb]: ChainId.BNB,
-  [Chain.Avalanche]: ChainId.AVALANCHE,
-  [Chain.Base]: ChainId.BASE,
+const CHAIN_NAME_TO_CHAIN_ID: { [key in InterfaceGqlChain]: SupportedChainId } = {
+  [Chain.Ethereum]: SupportedChainId.MAINNET,
+  [Chain.EthereumGoerli]: SupportedChainId.GOERLI,
+  [Chain.EthereumSepolia]: SupportedChainId.SEPOLIA,
+  [Chain.Polygon]: SupportedChainId.POLYGON,
+  [Chain.Celo]: SupportedChainId.CELO,
+  [Chain.Optimism]: SupportedChainId.OPTIMISM,
+  [Chain.Arbitrum]: SupportedChainId.ARBITRUM_ONE,
+  [Chain.Bnb]: SupportedChainId.BNB,
+  [Chain.Avalanche]: SupportedChainId.AVALANCHE,
+  [Chain.Base]: SupportedChainId.BASE,
 }
 
 export function isSupportedGQLChain(chain: Chain): chain is InterfaceGqlChain {
   return (UX_SUPPORTED_GQL_CHAINS as ReadonlyArray<Chain>).includes(chain)
 }
 
-export function supportedChainIdFromGQLChain(chain: InterfaceGqlChain): ChainId
-export function supportedChainIdFromGQLChain(chain: Chain): ChainId | undefined
-export function supportedChainIdFromGQLChain(chain: Chain): ChainId | undefined {
+export function supportedChainIdFromGQLChain(chain: InterfaceGqlChain): SupportedChainId
+export function supportedChainIdFromGQLChain(chain: Chain): SupportedChainId | undefined
+export function supportedChainIdFromGQLChain(chain: Chain): SupportedChainId | undefined {
   return isSupportedGQLChain(chain) ? CHAIN_NAME_TO_CHAIN_ID[chain] : undefined
 }
 
@@ -201,7 +208,7 @@ export const BACKEND_SUPPORTED_CHAINS = [
   Chain.Bnb,
   Chain.Celo,
 ] as const
-export const BACKEND_NOT_YET_SUPPORTED_CHAIN_IDS = [ChainId.AVALANCHE] as const
+export const BACKEND_NOT_YET_SUPPORTED_CHAIN_IDS = [SupportedChainId.AVALANCHE] as const
 
 export function getTokenDetailsURL({
   address,

@@ -1,11 +1,12 @@
 import { InterfaceEventName } from '@uniswap/analytics-events'
-import { ChainId, Percent } from '@uniswap/sdk-core'
+import { Percent } from '@uniswap/sdk-core'
 import { WETH_ADDRESS as getWethAddress } from '@uniswap/universal-router-sdk'
 import { useWeb3React } from '@web3-react/core'
 import FOT_DETECTOR_ABI from 'abis/fee-on-transfer-detector.json'
 import { FeeOnTransferDetector } from 'abis/types'
 import { sendAnalyticsEvent } from 'analytics'
 import { BIPS_BASE, ZERO_PERCENT } from 'constants/misc'
+import { SupportedChainId } from 'constants/types'
 import { useEffect, useState } from 'react'
 
 import { useContract } from './useContract'
@@ -31,7 +32,7 @@ function useFeeOnTransferDetectorContract(): FeeOnTransferDetector | null {
 }
 
 // TODO(WEB-2787): add tax-fetching for other chains
-const WETH_ADDRESS = getWethAddress(ChainId.MAINNET)
+const WETH_ADDRESS = getWethAddress(SupportedChainId.MAINNET)
 const AMOUNT_TO_BORROW = 10000 // smallest amount that has full precision over bps
 
 const FEE_CACHE: { [address in string]?: { sellTax?: Percent; buyTax?: Percent } } = {}
@@ -78,7 +79,7 @@ export function useSwapTaxes(inputTokenAddress?: string, outputTokenAddress?: st
   const { chainId } = useWeb3React()
 
   useEffect(() => {
-    if (!fotDetector || chainId !== ChainId.MAINNET) return
+    if (!fotDetector || chainId !== SupportedChainId.MAINNET) return
     getSwapTaxes(fotDetector, inputTokenAddress, outputTokenAddress).then(setTaxes)
   }, [fotDetector, inputTokenAddress, outputTokenAddress, chainId])
 

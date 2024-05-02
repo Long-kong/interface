@@ -1,10 +1,10 @@
-import { ChainId, SUPPORTED_CHAINS } from '@uniswap/sdk-core'
+import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'constants/types'
 import { render } from 'test-utils/render'
 
 import ChainSelectorRow from './ChainSelectorRow'
 
 describe('ChainSelectorRow', () => {
-  SUPPORTED_CHAINS.forEach((chainId) => {
+  ALL_SUPPORTED_CHAIN_IDS.forEach((chainId) => {
     it(`should match snapshot for chainId ${chainId}`, () => {
       const { container } = render(
         <ChainSelectorRow targetChain={chainId} onSelectChain={jest.fn()} isPending={false} disabled={false} />
@@ -17,7 +17,7 @@ describe('ChainSelectorRow', () => {
     const onSelectChain = jest.fn()
     const { getByTestId } = render(
       <ChainSelectorRow
-        targetChain={ChainId.OPTIMISM}
+        targetChain={SupportedChainId.OPTIMISM}
         onSelectChain={onSelectChain}
         isPending={false}
         disabled={false}
@@ -32,7 +32,7 @@ describe('ChainSelectorRow', () => {
     const onSelectChain = jest.fn()
     const { getByTestId } = render(
       <ChainSelectorRow
-        targetChain={ChainId.OPTIMISM}
+        targetChain={SupportedChainId.OPTIMISM}
         onSelectChain={onSelectChain}
         isPending={false}
         disabled={true}

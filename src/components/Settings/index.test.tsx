@@ -6,7 +6,7 @@ import { fireEvent, render, screen, waitFor } from 'test-utils/render'
 import SettingsTab from './index'
 
 const slippage = new Percent(75, 10_000)
-jest.mock('constants/chains')
+jest.mock('constants/types')
 
 describe('Settings Tab', () => {
   describe('showRoutingSettings', () => {

@@ -1,4 +1,5 @@
-import { ChainId, Token } from '@uniswap/sdk-core'
+import { Token } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/types'
 import { DEFAULT_COLOR } from 'constants/tokenColors'
 import useTokenLogoSource from 'hooks/useAssetLogoSource'
 import { darken, lighten, rgb } from 'polished'
@@ -49,7 +50,7 @@ async function getColorFromToken(token: Token, primarySrc?: string): Promise<str
       color = colorArray === DEFAULT_COLOR ? null : convertColorArrayToString(colorArray)
     }
 
-    if (!color && token.chainId === ChainId.MAINNET) {
+    if (!color && token.chainId === SupportedChainId.MAINNET) {
       const colorArray = await getColor(URIForEthToken(wrappedToken.address))
       color = colorArray === DEFAULT_COLOR ? null : convertColorArrayToString(colorArray)
     }

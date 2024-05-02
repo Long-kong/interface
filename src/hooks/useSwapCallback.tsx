@@ -17,9 +17,9 @@ import {
   TransactionType,
 } from '../state/transactions/types'
 import { currencyId } from '../utils/currencyId'
+import { useSwapExactETHForTokens } from './useSwapExactETHForTokens'
 import useTransactionDeadline from './useTransactionDeadline'
 import { useUniswapXSwapCallback } from './useUniswapXSwapCallback'
-import { useUniversalRouterSwapCallback } from './useUniversalRouter'
 
 export type SwapResult = Awaited<ReturnType<ReturnType<typeof useSwapCallback>>>
 
@@ -56,16 +56,22 @@ export function useSwapCallback(
     fiatValues,
   })
 
-  const universalRouterSwapCallback = useUniversalRouterSwapCallback(
-    isClassicTrade(trade) ? trade : undefined,
-    fiatValues,
-    {
-      slippageTolerance: allowedSlippage,
-      deadline,
-      permit: permitSignature,
-      ...getUniversalRouterFeeFields(trade),
-    }
-  )
+  // const universalRouterSwapCallback = useUniversalRouterSwapCallback(
+  //   isClassicTrade(trade) ? trade : undefined,
+  //   fiatValues,
+  //   {
+  //     slippageTolerance: allowedSlippage,
+  //     deadline,
+  //     permit: permitSignature,
+  //     ...getUniversalRouterFeeFields(trade),
+  //   }
+  // )
+
+  const universalRouterSwapCallback = useSwapExactETHForTokens(isClassicTrade(trade) ? trade : undefined, {
+    slippageTolerance: allowedSlippage,
+    deadline,
+    ...getUniversalRouterFeeFields(trade),
+  })
 
   const swapCallback = isUniswapXTrade(trade) ? uniswapXSwapCallback : universalRouterSwapCallback
 

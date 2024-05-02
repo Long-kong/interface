@@ -35,14 +35,14 @@ import { ProposalEditor } from './ProposalEditor'
 import { ProposalSubmissionModal } from './ProposalSubmissionModal'
 
 const PageWrapper = styled(AutoColumn)`
-  padding: 68px 8px 0px;
+  padding: 24px 8px 0px;
 
   @media only screen and (max-width: ${({ theme }) => `${theme.breakpoint.md}px`}) {
     padding: 48px 8px 0px;
   }
 
   @media only screen and (max-width: ${({ theme }) => `${theme.breakpoint.sm}px`}) {
-    padding-top: 20px;
+    // padding-top: 20px;
   }
 `
 

@@ -1,4 +1,4 @@
-import { ChainId } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/types'
 import useHttpLocations from 'hooks/useHttpLocations'
 import { useMemo } from 'react'
 import { isAddress } from 'utils'
@@ -10,57 +10,65 @@ import CeloLogo from '../../assets/svg/celo_logo.svg'
 import MaticLogo from '../../assets/svg/matic-token-icon.svg'
 import { isCelo, NATIVE_CHAIN_ID, nativeOnChain } from '../../constants/tokens'
 
-type Network = 'ethereum' | 'arbitrum' | 'optimism' | 'polygon' | 'smartchain' | 'celo' | 'avalanchec' | 'base'
+type Network =
+  | 'ethereum'
+  | 'arbitrum'
+  | 'optimism'
+  | 'polygon'
+  | 'smartchain'
+  | 'celo'
+  | 'avalanchec'
+  | 'base'
 
-export function chainIdToNetworkName(networkId: ChainId): Network {
+export function chainIdToNetworkName(networkId: SupportedChainId): Network {
   switch (networkId) {
-    case ChainId.MAINNET:
+    case SupportedChainId.MAINNET:
       return 'ethereum'
-    case ChainId.ARBITRUM_ONE:
+    case SupportedChainId.ARBITRUM_ONE:
       return 'arbitrum'
-    case ChainId.OPTIMISM:
+    case SupportedChainId.OPTIMISM:
       return 'optimism'
-    case ChainId.POLYGON:
+    case SupportedChainId.POLYGON:
       return 'polygon'
-    case ChainId.BNB:
+    case SupportedChainId.BNB:
       return 'smartchain'
-    case ChainId.CELO:
+    case SupportedChainId.CELO:
       return 'celo'
-    case ChainId.AVALANCHE:
+    case SupportedChainId.AVALANCHE:
       return 'avalanchec'
-    case ChainId.BASE:
+    case SupportedChainId.BASE:
       return 'base'
     default:
       return 'ethereum'
   }
 }
 
-export function getNativeLogoURI(chainId: ChainId = ChainId.MAINNET): string {
+export function getNativeLogoURI(chainId: SupportedChainId = SupportedChainId.MAINNET): string {
   switch (chainId) {
-    case ChainId.POLYGON:
-    case ChainId.POLYGON_MUMBAI:
+    case SupportedChainId.POLYGON:
+    case SupportedChainId.POLYGON_MUMBAI:
       return MaticLogo
-    case ChainId.BNB:
+    case SupportedChainId.BNB:
       return BnbLogo
-    case ChainId.CELO:
-    case ChainId.CELO_ALFAJORES:
+    case SupportedChainId.CELO:
+    case SupportedChainId.CELO_ALFAJORES:
       return CeloLogo
-    case ChainId.AVALANCHE:
+    case SupportedChainId.AVALANCHE:
       return AvaxLogo
     default:
       return EthereumLogo
   }
 }
 
-function getTokenLogoURI(address: string, chainId: ChainId = ChainId.MAINNET): string | void {
+function getTokenLogoURI(address: string, chainId: SupportedChainId = SupportedChainId.MAINNET): string | void {
   const networkName = chainIdToNetworkName(chainId)
   const networksWithUrls = [
-    ChainId.ARBITRUM_ONE,
-    ChainId.MAINNET,
-    ChainId.OPTIMISM,
-    ChainId.BNB,
-    ChainId.AVALANCHE,
-    ChainId.BASE,
+    SupportedChainId.ARBITRUM_ONE,
+    SupportedChainId.MAINNET,
+    SupportedChainId.OPTIMISM,
+    SupportedChainId.BNB,
+    SupportedChainId.AVALANCHE,
+    SupportedChainId.BASE,
   ]
   if (isCelo(chainId) && address === nativeOnChain(chainId).wrapped.address) {
     return CeloLogo

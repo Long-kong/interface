@@ -1,10 +1,11 @@
 import { arrayify } from '@ethersproject/bytes'
 import { parseBytes32String } from '@ethersproject/strings'
 import { InterfaceEventName } from '@uniswap/analytics-events'
-import { ChainId, Currency, Token } from '@uniswap/sdk-core'
+import { Currency, Token } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent } from 'analytics'
 import { asSupportedChain, isSupportedChain } from 'constants/chains'
+import { SupportedChainId } from 'constants/types'
 import { useBytes32TokenContract, useTokenContract } from 'hooks/useContract'
 import { NEVER_RELOAD, useSingleCallResult } from 'lib/hooks/multicall'
 import useNativeCurrency from 'lib/hooks/useNativeCurrency'
@@ -110,7 +111,7 @@ export function useTokenFromMapOrNetwork(tokens: TokenMap, tokenAddress?: string
  */
 export function useCurrencyFromMap(
   tokens: TokenMap,
-  chainId: ChainId | undefined,
+  chainId: SupportedChainId | undefined,
   currencyId?: string | null
 ): Currency | undefined {
   const nativeCurrency = useNativeCurrency(chainId)

@@ -1,5 +1,5 @@
-import { ChainId } from '@uniswap/sdk-core'
 import { PortfolioLogo } from 'components/AccountDrawer/MiniPortfolio/PortfolioLogo'
+import { SupportedChainId } from 'constants/types'
 import { SearchToken } from 'graphql/data/SearchTokens'
 import { TokenQueryData } from 'graphql/data/Token'
 import { TopToken } from 'graphql/data/TopTokens'
@@ -14,7 +14,8 @@ export default function QueryTokenLogo(
   }
 ) {
   const chainId =
-    (props.token?.chain ? supportedChainIdFromGQLChain(props.token?.chain) : ChainId.MAINNET) ?? ChainId.MAINNET
+    (props.token?.chain ? supportedChainIdFromGQLChain(props.token?.chain) : SupportedChainId.MAINNET) ??
+    SupportedChainId.MAINNET
   const currency = props.token ? gqlToCurrency(props.token) : undefined
 
   return <PortfolioLogo currencies={useMemo(() => [currency], [currency])} chainId={chainId} {...props} />

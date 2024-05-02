@@ -1,9 +1,10 @@
 import { MixedRouteSDK, ONE, Protocol, Trade } from '@uniswap/router-sdk'
-import { ChainId, Currency, CurrencyAmount, Fraction, Percent, Price, Token, TradeType } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Fraction, Percent, Price, Token, TradeType } from '@uniswap/sdk-core'
 import { DutchOrderInfo, DutchOrderInfoJSON, DutchOrderTrade as IDutchOrderTrade } from '@uniswap/uniswapx-sdk'
 import { Route as V2Route } from '@uniswap/v2-sdk'
 import { Route as V3Route } from '@uniswap/v3-sdk'
 import { ZERO_PERCENT } from 'constants/misc'
+import { SupportedChainId } from 'constants/types'
 
 export enum TradeState {
   LOADING = 'loading',
@@ -30,11 +31,11 @@ export enum RouterPreference {
 
 export interface GetQuoteArgs {
   tokenInAddress: string
-  tokenInChainId: ChainId
+  tokenInChainId: SupportedChainId
   tokenInDecimals: number
   tokenInSymbol?: string
   tokenOutAddress: string
-  tokenOutChainId: ChainId
+  tokenOutChainId: SupportedChainId
   tokenOutDecimals: number
   tokenOutSymbol?: string
   amount: string
@@ -58,11 +59,11 @@ export interface GetQuoteArgs {
 export type GetQuickQuoteArgs = {
   amount: string
   tokenInAddress: string
-  tokenInChainId: ChainId
+  tokenInChainId: SupportedChainId
   tokenInDecimals: number
   tokenInSymbol?: string
   tokenOutAddress: string
-  tokenOutChainId: ChainId
+  tokenOutChainId: SupportedChainId
   tokenOutDecimals: number
   tokenOutSymbol?: string
   tradeType: TradeType

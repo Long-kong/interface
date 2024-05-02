@@ -1,31 +1,34 @@
 import { ApolloClient, ApolloLink, concat, HttpLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client'
-import { ChainId } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/types'
 
 import store from '../../state/index'
 
 const CHAIN_SUBGRAPH_URL: Record<number, string> = {
-  [ChainId.MAINNET]: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3?source=uniswap',
-  [ChainId.ARBITRUM_ONE]: 'https://thegraph.com/hosted-service/subgraph/ianlapham/uniswap-arbitrum-one?source=uniswap',
-  [ChainId.OPTIMISM]: 'https://api.thegraph.com/subgraphs/name/ianlapham/optimism-post-regenesis?source=uniswap',
-  [ChainId.POLYGON]: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-polygon?source=uniswap',
-  [ChainId.CELO]: 'https://api.thegraph.com/subgraphs/name/jesse-sawa/uniswap-celo?source=uniswap',
-  [ChainId.BNB]: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-bsc?source=uniswap',
-  [ChainId.AVALANCHE]: 'https://api.thegraph.com/subgraphs/name/lynnshaoyu/uniswap-v3-avax?source=uniswap',
-  [ChainId.BASE]: 'https://api.studio.thegraph.com/query/48211/uniswap-v3-base/version/latest',
+  [SupportedChainId.MAINNET]: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3?source=uniswap',
+  [SupportedChainId.ARBITRUM_ONE]:
+    'https://thegraph.com/hosted-service/subgraph/ianlapham/uniswap-arbitrum-one?source=uniswap',
+  [SupportedChainId.OPTIMISM]:
+    'https://api.thegraph.com/subgraphs/name/ianlapham/optimism-post-regenesis?source=uniswap',
+  [SupportedChainId.POLYGON]: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-polygon?source=uniswap',
+  [SupportedChainId.CELO]: 'https://api.thegraph.com/subgraphs/name/jesse-sawa/uniswap-celo?source=uniswap',
+  [SupportedChainId.BNB]: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-bsc?source=uniswap',
+  [SupportedChainId.AVALANCHE]: 'https://api.thegraph.com/subgraphs/name/lynnshaoyu/uniswap-v3-avax?source=uniswap',
+  [SupportedChainId.BASE]: 'https://api.studio.thegraph.com/query/48211/uniswap-v3-base/version/latest',
 }
 
 const CHAIN_BLOCK_SUBGRAPH_URL: Record<number, string> = {
-  [ChainId.MAINNET]: 'https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks?source=uniswap',
-  [ChainId.ARBITRUM_ONE]: 'https://api.thegraph.com/subgraphs/name/ianlapham/arbitrum-one-blocks?source=uniswap',
-  [ChainId.OPTIMISM]: 'https://api.thegraph.com/subgraphs/name/ianlapham/uni-testing-subgraph?source=uniswap',
-  [ChainId.POLYGON]: 'https://api.thegraph.com/subgraphs/name/ianlapham/polygon-blocks?source=uniswap',
-  [ChainId.CELO]: 'https://api.thegraph.com/subgraphs/name/jesse-sawa/celo-blocks?source=uniswap',
-  [ChainId.BNB]: 'https://api.thegraph.com/subgraphs/name/wombat-exchange/bnb-chain-block?source=uniswap',
-  [ChainId.AVALANCHE]: 'https://api.thegraph.com/subgraphs/name/lynnshaoyu/avalanche-blocks?source=uniswap',
-  [ChainId.BASE]: 'https://api.studio.thegraph.com/query/48211/base-blocks/version/latest?source=uniswap',
+  [SupportedChainId.MAINNET]: 'https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks?source=uniswap',
+  [SupportedChainId.ARBITRUM_ONE]:
+    'https://api.thegraph.com/subgraphs/name/ianlapham/arbitrum-one-blocks?source=uniswap',
+  [SupportedChainId.OPTIMISM]: 'https://api.thegraph.com/subgraphs/name/ianlapham/uni-testing-subgraph?source=uniswap',
+  [SupportedChainId.POLYGON]: 'https://api.thegraph.com/subgraphs/name/ianlapham/polygon-blocks?source=uniswap',
+  [SupportedChainId.CELO]: 'https://api.thegraph.com/subgraphs/name/jesse-sawa/celo-blocks?source=uniswap',
+  [SupportedChainId.BNB]: 'https://api.thegraph.com/subgraphs/name/wombat-exchange/bnb-chain-block?source=uniswap',
+  [SupportedChainId.AVALANCHE]: 'https://api.thegraph.com/subgraphs/name/lynnshaoyu/avalanche-blocks?source=uniswap',
+  [SupportedChainId.BASE]: 'https://api.studio.thegraph.com/query/48211/base-blocks/version/latest?source=uniswap',
 }
 
-const httpLink = new HttpLink({ uri: CHAIN_SUBGRAPH_URL[ChainId.MAINNET] })
+const httpLink = new HttpLink({ uri: CHAIN_SUBGRAPH_URL[SupportedChainId.MAINNET] })
 
 // This middleware will allow us to dynamically update the uri for the requests based off chainId
 // For more information: https://www.apollographql.com/docs/react/networking/advanced-http-networking/
@@ -34,7 +37,10 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   const chainId = store.getState().application.chainId
 
   operation.setContext(() => ({
-    uri: chainId && CHAIN_SUBGRAPH_URL[chainId] ? CHAIN_SUBGRAPH_URL[chainId] : CHAIN_SUBGRAPH_URL[ChainId.MAINNET],
+    uri:
+      chainId && CHAIN_SUBGRAPH_URL[chainId]
+        ? CHAIN_SUBGRAPH_URL[chainId]
+        : CHAIN_SUBGRAPH_URL[SupportedChainId.MAINNET],
   }))
 
   return forward(operation)
@@ -46,63 +52,63 @@ export const apolloClient = new ApolloClient({
 })
 
 export const chainToApolloClient: Record<number, ApolloClient<NormalizedCacheObject>> = {
-  [ChainId.MAINNET]: new ApolloClient({
+  [SupportedChainId.MAINNET]: new ApolloClient({
     cache: new InMemoryCache(),
-    uri: CHAIN_SUBGRAPH_URL[ChainId.MAINNET],
+    uri: CHAIN_SUBGRAPH_URL[SupportedChainId.MAINNET],
   }),
-  [ChainId.ARBITRUM_ONE]: new ApolloClient({
+  [SupportedChainId.ARBITRUM_ONE]: new ApolloClient({
     cache: new InMemoryCache(),
-    uri: CHAIN_SUBGRAPH_URL[ChainId.ARBITRUM_ONE],
+    uri: CHAIN_SUBGRAPH_URL[SupportedChainId.ARBITRUM_ONE],
   }),
-  [ChainId.OPTIMISM]: new ApolloClient({
+  [SupportedChainId.OPTIMISM]: new ApolloClient({
     cache: new InMemoryCache(),
-    uri: CHAIN_SUBGRAPH_URL[ChainId.OPTIMISM],
+    uri: CHAIN_SUBGRAPH_URL[SupportedChainId.OPTIMISM],
   }),
-  [ChainId.POLYGON]: new ApolloClient({
+  [SupportedChainId.POLYGON]: new ApolloClient({
     cache: new InMemoryCache(),
-    uri: CHAIN_SUBGRAPH_URL[ChainId.POLYGON],
+    uri: CHAIN_SUBGRAPH_URL[SupportedChainId.POLYGON],
   }),
-  [ChainId.CELO]: new ApolloClient({
+  [SupportedChainId.CELO]: new ApolloClient({
     cache: new InMemoryCache(),
-    uri: CHAIN_SUBGRAPH_URL[ChainId.CELO],
+    uri: CHAIN_SUBGRAPH_URL[SupportedChainId.CELO],
   }),
-  [ChainId.BNB]: new ApolloClient({
+  [SupportedChainId.BNB]: new ApolloClient({
     cache: new InMemoryCache(),
-    uri: CHAIN_SUBGRAPH_URL[ChainId.BNB],
+    uri: CHAIN_SUBGRAPH_URL[SupportedChainId.BNB],
   }),
-  [ChainId.AVALANCHE]: new ApolloClient({
+  [SupportedChainId.AVALANCHE]: new ApolloClient({
     cache: new InMemoryCache(),
-    uri: CHAIN_SUBGRAPH_URL[ChainId.AVALANCHE],
+    uri: CHAIN_SUBGRAPH_URL[SupportedChainId.AVALANCHE],
   }),
 }
 
 export const chainToApolloBlockClient: Record<number, ApolloClient<NormalizedCacheObject>> = {
-  [ChainId.MAINNET]: new ApolloClient({
-    uri: CHAIN_BLOCK_SUBGRAPH_URL[ChainId.MAINNET],
+  [SupportedChainId.MAINNET]: new ApolloClient({
+    uri: CHAIN_BLOCK_SUBGRAPH_URL[SupportedChainId.MAINNET],
     cache: new InMemoryCache(),
   }),
-  [ChainId.ARBITRUM_ONE]: new ApolloClient({
-    uri: CHAIN_BLOCK_SUBGRAPH_URL[ChainId.ARBITRUM_ONE],
+  [SupportedChainId.ARBITRUM_ONE]: new ApolloClient({
+    uri: CHAIN_BLOCK_SUBGRAPH_URL[SupportedChainId.ARBITRUM_ONE],
     cache: new InMemoryCache(),
   }),
-  [ChainId.OPTIMISM]: new ApolloClient({
-    uri: CHAIN_BLOCK_SUBGRAPH_URL[ChainId.OPTIMISM],
+  [SupportedChainId.OPTIMISM]: new ApolloClient({
+    uri: CHAIN_BLOCK_SUBGRAPH_URL[SupportedChainId.OPTIMISM],
     cache: new InMemoryCache(),
   }),
-  [ChainId.POLYGON]: new ApolloClient({
-    uri: CHAIN_BLOCK_SUBGRAPH_URL[ChainId.POLYGON],
+  [SupportedChainId.POLYGON]: new ApolloClient({
+    uri: CHAIN_BLOCK_SUBGRAPH_URL[SupportedChainId.POLYGON],
     cache: new InMemoryCache(),
   }),
-  [ChainId.CELO]: new ApolloClient({
-    uri: CHAIN_BLOCK_SUBGRAPH_URL[ChainId.CELO],
+  [SupportedChainId.CELO]: new ApolloClient({
+    uri: CHAIN_BLOCK_SUBGRAPH_URL[SupportedChainId.CELO],
     cache: new InMemoryCache(),
   }),
-  [ChainId.BNB]: new ApolloClient({
-    uri: CHAIN_BLOCK_SUBGRAPH_URL[ChainId.BNB],
+  [SupportedChainId.BNB]: new ApolloClient({
+    uri: CHAIN_BLOCK_SUBGRAPH_URL[SupportedChainId.BNB],
     cache: new InMemoryCache(),
   }),
-  [ChainId.AVALANCHE]: new ApolloClient({
-    uri: CHAIN_BLOCK_SUBGRAPH_URL[ChainId.AVALANCHE],
+  [SupportedChainId.AVALANCHE]: new ApolloClient({
+    uri: CHAIN_BLOCK_SUBGRAPH_URL[SupportedChainId.AVALANCHE],
     cache: new InMemoryCache(),
   }),
 }

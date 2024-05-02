@@ -1,7 +1,9 @@
 import { Trans } from '@lingui/macro'
-import { ChainId, Currency, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import { useConnectionReady } from 'connection/eagerlyConnect'
+import { CONTRACT_ADDRESS } from 'constants/misc'
+import { SupportedChainId } from 'constants/types'
 import { useFotAdjustmentsEnabled } from 'featureFlags/flags/fotAdjustments'
 import useAutoSlippageTolerance from 'hooks/useAutoSlippageTolerance'
 import { useDebouncedTrade } from 'hooks/useDebouncedTrade'
@@ -75,7 +77,8 @@ export function useSwapActionHandlers(dispatch: React.Dispatch<AnyAction>): {
 const BAD_RECIPIENT_ADDRESSES: { [address: string]: true } = {
   '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f': true, // v2 factory
   '0xf164fC0Ec4E93095b804a4795bBe1e041497b92a': true, // v2 router 01
-  '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D': true, // v2 router 02
+  // '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D': true, // v2 router 02
+  '0xa47bDB758c729be848170094adb88118deFc6468': true, // TODO: kong address (contract address) proxy address
 }
 
 export type SwapInfo = {
@@ -98,7 +101,7 @@ export type SwapInfo = {
 }
 
 // from the current swap inputs, compute the best trade and return it.
-export function useDerivedSwapInfo(state: SwapState, chainId: ChainId | undefined): SwapInfo {
+export function useDerivedSwapInfo(state: SwapState, chainId: SupportedChainId | undefined): SwapInfo {
   const { account } = useWeb3React()
 
   const {
@@ -279,7 +282,10 @@ export function queryParametersToSwapState(parsedQs: ParsedQs): SwapState {
 
   if (inputCurrency === '' && outputCurrency === '' && typedValue === '' && independentField === Field.INPUT) {
     // Defaults to having the native currency selected
+    // defaultInputToken
     inputCurrency = 'ETH'
+    // defaultOutputToken
+    outputCurrency = CONTRACT_ADDRESS
   } else if (inputCurrency === outputCurrency) {
     // clear output if identical
     outputCurrency = ''

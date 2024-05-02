@@ -5,7 +5,7 @@ import { render, screen } from 'test-utils/render'
 
 import Pool from '.'
 
-jest.mock('constants/chains')
+jest.mock('constants/types')
 jest.mock('hooks/useV3Positions')
 
 describe('networks', () => {

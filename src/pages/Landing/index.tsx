@@ -1,28 +1,19 @@
-import { Trans } from '@lingui/macro'
-import { BrowserEvent, InterfaceElementName, InterfacePageName, SharedEventName } from '@uniswap/analytics-events'
-import { Trace, TraceEvent } from 'analytics'
-import { ReactComponent as UniswapAppLogo } from 'assets/svg/uniswap_app_logo.svg'
-import { AboutFooter } from 'components/About/AboutFooter'
-import Card, { CardType } from 'components/About/Card'
-import { MAIN_CARDS, MORE_CARDS } from 'components/About/constants'
-import ProtocolBanner from 'components/About/ProtocolBanner'
+import { MAIN_CARDS } from 'components/About/constants'
 import { useAccountDrawer } from 'components/AccountDrawer'
 import { BaseButton } from 'components/Button'
-import { AppleLogo } from 'components/Logo/AppleLogo'
+import { MainViewComponent } from 'components/MainView/MainView'
 import { useAndroidGALaunchFlagEnabled } from 'featureFlags/flags/androidGALaunch'
 import { useDisableNFTRoutes } from 'hooks/useDisableNFTRoutes'
 import Swap from 'pages/Swap'
 import { parse } from 'qs'
-import { useEffect, useMemo, useRef } from 'react'
-import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { useMemo, useRef } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Link as NativeLink } from 'react-router-dom'
 import { useAppSelector } from 'state/hooks'
 import styled, { css } from 'styled-components'
 import { BREAKPOINTS } from 'theme'
 import { useIsDarkMode } from 'theme/components/ThemeToggle'
-import { TRANSITION_DURATIONS } from 'theme/styles'
 import { Z_INDEX } from 'theme/zIndex'
-import { getDownloadAppLinkProps } from 'utils/openDownloadApp'
 
 const PageContainer = styled.div`
   position: absolute;
@@ -274,13 +265,33 @@ const CardGrid = styled.div<{ cols: number }>`
   }
 `
 
-const LandingSwapContainer = styled.div`
-  height: ${({ theme }) => `calc(100vh - ${theme.mobileBottomBarHeight}px)`};
+export const ContainerTemplate = styled.div<{ align?: 'center' | 'flex-start' | 'flex-end' }>`
+  display: flex;
+  justify-content: ${({ align }) => (align ? align : 'center')};
+  width: 100%;
+  max-width: ${BREAKPOINTS.xl}px;
+  @media screen and (min-width: ${BREAKPOINTS.xxl}px) {
+    max-width: ${BREAKPOINTS.xxl}px;
+  }
+`
+
+const LandingSwapContainer = styled(ContainerTemplate)`
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
   z-index: 1;
+`
+
+const PageWrapper = styled(ContainerTemplate)`
+  padding: 24px 8px 0px;
+  width: 100%;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  @media screen and (min-width: ${BREAKPOINTS.xl}px) {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 `
 
 const SwapCss = css`
@@ -326,115 +337,29 @@ export default function Landing() {
 
   const [accountDrawerOpen] = useAccountDrawer()
   const navigate = useNavigate()
-  useEffect(() => {
-    if (accountDrawerOpen) {
-      setTimeout(() => {
-        navigate('/swap')
-      }, TRANSITION_DURATIONS.fast)
-    }
-  }, [accountDrawerOpen, navigate])
+  // useEffect(() => {
+  //   if (accountDrawerOpen) {
+  //     setTimeout(() => {
+  //       navigate('/swap')
+  //     }, TRANSITION_DURATIONS.fast)
+  //   }
+  // }, [accountDrawerOpen, navigate])
 
   const location = useLocation()
   const queryParams = parse(location.search, { ignoreQueryPrefix: true })
 
-  if (selectedWallet && !queryParams.intro) {
-    return <Navigate to={{ ...location, pathname: '/swap' }} replace />
-  }
+  // if (selectedWallet && !queryParams.intro) {
+  //   return <Navigate to={{ ...location, pathname: '/swap' }} replace />
+  // }
 
   return (
-    <Trace page={InterfacePageName.LANDING_PAGE} shouldLogImpression>
-      <PageContainer data-testid="landing-page">
-        <LandingSwapContainer>
-          <TraceEvent
-            events={[BrowserEvent.onClick]}
-            name={SharedEventName.ELEMENT_CLICKED}
-            element={InterfaceElementName.LANDING_PAGE_SWAP_ELEMENT}
-          >
-            <Link to="/swap">
-              <LandingSwap />
-            </Link>
-          </TraceEvent>
-        </LandingSwapContainer>
-        <Gradient isDarkMode={isDarkMode} />
-        <GlowContainer>
-          <Glow />
-        </GlowContainer>
-        <ContentContainer isDarkMode={isDarkMode}>
-          <TitleText isDarkMode={isDarkMode}>
-            {shouldDisableNFTRoutes ? (
-              <Trans>Trade crypto with confidence</Trans>
-            ) : (
-              <Trans>Trade crypto and NFTs with confidence</Trans>
-            )}
-          </TitleText>
-          <SubTextContainer>
-            <SubText>
-              {shouldDisableNFTRoutes ? (
-                <Trans>Buy, sell, and explore tokens</Trans>
-              ) : (
-                <Trans>Buy, sell, and explore tokens and NFTs</Trans>
-              )}
-            </SubText>
-          </SubTextContainer>
-          <ActionsContainer>
-            <TraceEvent
-              events={[BrowserEvent.onClick]}
-              name={SharedEventName.ELEMENT_CLICKED}
-              element={InterfaceElementName.CONTINUE_BUTTON}
-            >
-              <ButtonCTA as={Link} to="/swap">
-                <ButtonCTAText>
-                  <Trans>Get started</Trans>
-                </ButtonCTAText>
-              </ButtonCTA>
-            </TraceEvent>
-          </ActionsContainer>
-          <LearnMoreContainer
-            onClick={() => {
-              cardsRef?.current?.scrollIntoView({ behavior: 'smooth' })
-            }}
-          >
-            <Trans>Learn more</Trans>
-          </LearnMoreContainer>
-
-          <DownloadWalletLink
-            {...getDownloadAppLinkProps({
-              element: InterfaceElementName.UNISWAP_WALLET_LANDING_PAGE_DOWNLOAD_BUTTON,
-              isAndroidGALaunched,
-            })}
-          >
-            {isAndroidGALaunched ? (
-              <>
-                <UniswapAppLogo width="20" height="20" />
-                Download the Uniswap app
-              </>
-            ) : (
-              <>
-                <AppleLogo width="20" height="20" />
-                Download the Uniswap app for iOS
-              </>
-            )}
-          </DownloadWalletLink>
-        </ContentContainer>
-        <AboutContentContainer isDarkMode={isDarkMode}>
-          <CardGrid cols={cards.length} ref={cardsRef}>
-            {cards.map(({ darkBackgroundImgSrc, lightBackgroundImgSrc, ...card }) => (
-              <Card
-                {...card}
-                backgroundImgSrc={isDarkMode ? darkBackgroundImgSrc : lightBackgroundImgSrc}
-                key={card.title}
-              />
-            ))}
-          </CardGrid>
-          <CardGrid cols={MORE_CARDS.length}>
-            {MORE_CARDS.map(({ darkIcon, lightIcon, ...card }) => (
-              <Card {...card} icon={isDarkMode ? darkIcon : lightIcon} key={card.title} type={CardType.Secondary} />
-            ))}
-          </CardGrid>
-          <ProtocolBanner />
-          <AboutFooter />
-        </AboutContentContainer>
-      </PageContainer>
-    </Trace>
+    <LandingSwapContainer>
+      <PageWrapper>
+        {/* <Link to="/swap">
+          <LandingSwap />
+        </Link> */}
+        <MainViewComponent />
+      </PageWrapper>
+    </LandingSwapContainer>
   )
 }

@@ -1,5 +1,5 @@
-import { ChainId } from '@uniswap/sdk-core'
 import Column from 'components/Column'
+import { SupportedChainId } from 'constants/types'
 import { BaseVariant, FeatureFlag, featureFlagSettings, useUpdateConfig, useUpdateFlag } from 'featureFlags'
 import { DynamicConfigName } from 'featureFlags/dynamicConfig'
 import { useQuickRouteChains } from 'featureFlags/dynamicConfig/quickRouteChains'
@@ -320,7 +320,7 @@ export default function FeatureFlagModal() {
           />
           <DynamicConfigDropdown
             selected={useQuickRouteChains()}
-            options={Object.values(ChainId).filter((v) => !isNaN(Number(v))) as ChainId[]}
+            options={Object.values(SupportedChainId).filter((v) => !isNaN(Number(v))) as SupportedChainId[]}
             parser={Number.parseInt}
             configName={DynamicConfigName.quickRouteChains}
             label="Enable quick routes for these chains"

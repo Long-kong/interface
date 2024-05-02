@@ -1,11 +1,12 @@
 import { Trans } from '@lingui/macro'
-import { ChainId, Currency } from '@uniswap/sdk-core'
+import { Currency } from '@uniswap/sdk-core'
 import blankTokenUrl from 'assets/svg/blank_token.svg'
 import Column from 'components/Column'
 import { ChainLogo } from 'components/Logo/ChainLogo'
 import Row from 'components/Row'
 import { LoadingBubble } from 'components/Tokens/loading'
 import { BIPS_BASE } from 'constants/misc'
+import { SupportedChainId } from 'constants/types'
 import { chainIdToBackendName } from 'graphql/data/util'
 import { useCurrency } from 'hooks/Tokens'
 import useTokenLogoSource from 'hooks/useAssetLogoSource'
@@ -154,8 +155,8 @@ const L2LogoContainer = styled.div`
   justify-content: center;
 `
 
-function SquareL2Logo({ chainId }: { chainId: ChainId }) {
-  if (chainId === ChainId.MAINNET) return null
+function SquareL2Logo({ chainId }: { chainId: SupportedChainId }) {
+  if (chainId === SupportedChainId.MAINNET) return null
 
   return (
     <L2LogoContainer>

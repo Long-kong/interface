@@ -1,8 +1,9 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { t } from '@lingui/macro'
-import { ChainId, Currency, CurrencyAmount, TradeType } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, TradeType } from '@uniswap/sdk-core'
 import UniswapXBolt from 'assets/svg/bolt.svg'
 import { nativeOnChain } from 'constants/tokens'
+import { SupportedChainId } from 'constants/types'
 import { TransactionStatus } from 'graphql/data/__generated__/types-and-hooks'
 import { ChainTokenMap, useAllTokensMultichain } from 'hooks/Tokens'
 import { useMemo } from 'react'
@@ -30,7 +31,7 @@ import { Activity, ActivityMap } from './types'
 
 type FormatNumberFunctionType = ReturnType<typeof useFormatter>['formatNumber']
 
-function getCurrency(currencyId: string, chainId: ChainId, tokens: ChainTokenMap): Currency | undefined {
+function getCurrency(currencyId: string, chainId: SupportedChainId, tokens: ChainTokenMap): Currency | undefined {
   return currencyId === 'ETH' ? nativeOnChain(chainId) : tokens[chainId]?.[currencyId]
 }
 
@@ -61,7 +62,7 @@ function buildCurrencyDescriptor(
 
 function parseSwap(
   swap: ExactInputSwapTransactionInfo | ExactOutputSwapTransactionInfo,
-  chainId: ChainId,
+  chainId: SupportedChainId,
   tokens: ChainTokenMap,
   formatNumber: FormatNumberFunctionType
 ): Partial<Activity> {
@@ -81,7 +82,7 @@ function parseSwap(
 
 function parseWrap(
   wrap: WrapTransactionInfo,
-  chainId: ChainId,
+  chainId: SupportedChainId,
   status: TransactionStatus,
   formatNumber: FormatNumberFunctionType
 ): Partial<Activity> {
@@ -104,7 +105,7 @@ function parseWrap(
 
 function parseApproval(
   approval: ApproveTransactionInfo,
-  chainId: ChainId,
+  chainId: SupportedChainId,
   tokens: ChainTokenMap,
   status: TransactionStatus
 ): Partial<Activity> {
@@ -127,7 +128,7 @@ type GenericLPInfo = Omit<
 >
 function parseLP(
   lp: GenericLPInfo,
-  chainId: ChainId,
+  chainId: SupportedChainId,
   tokens: ChainTokenMap,
   formatNumber: FormatNumberFunctionType
 ): Partial<Activity> {
@@ -141,7 +142,7 @@ function parseLP(
 
 function parseCollectFees(
   collect: CollectFeesTransactionInfo,
-  chainId: ChainId,
+  chainId: SupportedChainId,
   tokens: ChainTokenMap,
   formatNumber: FormatNumberFunctionType
 ): Partial<Activity> {
@@ -162,7 +163,7 @@ function parseCollectFees(
 
 function parseMigrateCreateV3(
   lp: MigrateV2LiquidityToV3TransactionInfo | CreateV3PoolTransactionInfo,
-  chainId: ChainId,
+  chainId: SupportedChainId,
   tokens: ChainTokenMap
 ): Partial<Activity> {
   const baseCurrency = getCurrency(lp.baseCurrencyId, chainId, tokens)
@@ -184,7 +185,7 @@ export function getTransactionStatus(details: TransactionDetails): TransactionSt
 
 export function transactionToActivity(
   details: TransactionDetails,
-  chainId: ChainId,
+  chainId: SupportedChainId,
   tokens: ChainTokenMap,
   formatNumber: FormatNumberFunctionType
 ): Activity | undefined {

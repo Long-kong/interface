@@ -1,6 +1,6 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit'
-import { ChainId } from '@uniswap/sdk-core'
 import { DEFAULT_TXN_DISMISS_MS } from 'constants/misc'
+import { SupportedChainId } from 'constants/types'
 
 export enum PopupType {
   Transaction = 'transaction',
@@ -19,7 +19,7 @@ export type PopupContent =
     }
   | {
       type: PopupType.FailedSwitchNetwork
-      failedSwitchNetwork: ChainId
+      failedSwitchNetwork: SupportedChainId
     }
 
 export enum ApplicationModal {
@@ -45,6 +45,10 @@ export enum ApplicationModal {
   VOTE,
   UK_DISCLAIMER,
   UNISWAP_NFT_AIRDROP_CLAIM,
+  REFERRAL,
+  ANNOUNCEMENTS,
+  SELL,
+  AFFILIATES,
 }
 
 export type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>

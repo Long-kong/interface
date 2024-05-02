@@ -1,5 +1,4 @@
 import { Trans } from '@lingui/macro'
-import { ChainId } from '@uniswap/sdk-core'
 import Column from 'components/Column'
 import { EtherscanLogo } from 'components/Icons/Etherscan'
 import { Globe } from 'components/Icons/Globe'
@@ -8,6 +7,7 @@ import Row from 'components/Row'
 import { FOTTooltipContent } from 'components/swap/SwapLineItem'
 import { NoInfoAvailable, truncateDescription, TruncateDescriptionButton } from 'components/Tokens/TokenDetails/shared'
 import { MouseoverTooltip, TooltipSize } from 'components/Tooltip'
+import { SupportedChainId } from 'constants/types'
 import { useTokenProjectQuery } from 'graphql/data/__generated__/types-and-hooks'
 import { chainIdToBackendName } from 'graphql/data/util'
 import useCopyClipboard from 'hooks/useCopyClipboard'
@@ -70,7 +70,7 @@ const TRUNCATE_CHARACTER_COUNT = 75
 
 export function TokenDescription({
   tokenAddress,
-  chainId = ChainId.MAINNET,
+  chainId = SupportedChainId.MAINNET,
   isNative = false,
   characterCount = TRUNCATE_CHARACTER_COUNT,
 }: {
@@ -129,7 +129,7 @@ export function TokenDescription({
         <ExternalLink href={explorerUrl}>
           <TokenInfoButton tokenColor={color}>
             <EtherscanLogo width="18px" height="18px" fill={color} />
-            {chainId === ChainId.MAINNET ? <Trans>Etherscan</Trans> : <Trans>Explorer</Trans>}
+            {chainId === SupportedChainId.MAINNET ? <Trans>Etherscan</Trans> : <Trans>Explorer</Trans>}
           </TokenInfoButton>
         </ExternalLink>
         {!!tokenProject?.homepageUrl && (

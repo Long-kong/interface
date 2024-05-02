@@ -7,6 +7,7 @@ function getDeprecatedTheme(darkMode: boolean) {
     deprecated_yellow1: colors.yellow400,
     deprecated_yellow2: colors.yellow500,
     deprecated_yellow3: colors.yellow600,
+    warning: colors.warning,
 
     // dont wanna forget these blue yet
     deprecated_blue4: darkMode ? '#153d6f70' : '#C4D9F8',

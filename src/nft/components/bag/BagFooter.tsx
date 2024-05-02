@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther, parseEther } from '@ethersproject/units'
 import { t, Trans } from '@lingui/macro'
 import { BrowserEvent, InterfaceElementName, NFTEventName } from '@uniswap/analytics-events'
-import { ChainId, Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, TraceEvent } from 'analytics'
 import { useToggleAccountDrawer } from 'components/AccountDrawer'
@@ -14,6 +14,7 @@ import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { LoadingBubble } from 'components/Tokens/loading'
 import { MouseoverTooltip } from 'components/Tooltip'
 import { isSupportedChain } from 'constants/chains'
+import { SupportedChainId } from 'constants/types'
 import { getURAddress, useNftUniversalRouterAddress } from 'graphql/data/nft/NftUniversalRouterAddress'
 import { useCurrency } from 'hooks/Tokens'
 import usePermit2Allowance, { AllowanceState } from 'hooks/usePermit2Allowance'
@@ -296,7 +297,7 @@ export const BagFooter = ({ setModalIsOpen, eventProperties }: BagFooterProps) =
   const [tokenSelectorOpen, setTokenSelectorOpen] = useState(false)
   const isPending = PENDING_BAG_STATUSES.includes(bagStatus)
   const activeCurrency = inputCurrency ?? defaultCurrency
-  const usingPayWithAnyToken = !!inputCurrency && chainId === ChainId.MAINNET
+  const usingPayWithAnyToken = !!inputCurrency && chainId === SupportedChainId.MAINNET
   const { universalRouterAddress, universalRouterAddressIsLoading } = useNftUniversalRouterAddress()
 
   useSubscribeTransactionState(setModalIsOpen)
@@ -326,7 +327,7 @@ export const BagFooter = ({ setModalIsOpen, eventProperties }: BagFooterProps) =
 
   const { balance: balanceInEth } = useWalletBalance()
   const sufficientBalance = useMemo(() => {
-    if (!connected || chainId !== ChainId.MAINNET) {
+    if (!connected || chainId !== SupportedChainId.MAINNET) {
       return undefined
     }
 
@@ -359,8 +360,8 @@ export const BagFooter = ({ setModalIsOpen, eventProperties }: BagFooterProps) =
     handleClick,
     buttonColor,
   } = useMemo((): BuyButtonStateData => {
-    if (connected && chainId !== ChainId.MAINNET) {
-      const handleClick = () => switchChain(connector, ChainId.MAINNET)
+    if (connected && chainId !== SupportedChainId.MAINNET) {
+      const handleClick = () => switchChain(connector, SupportedChainId.MAINNET)
       return getBuyButtonStateData(BuyButtonStates.NOT_SUPPORTED_CHAIN, theme, handleClick)
     }
 

@@ -1,4 +1,5 @@
-import { ChainId, CurrencyAmount } from '@uniswap/sdk-core'
+import { CurrencyAmount } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/types'
 import { CyHttpMessages } from 'cypress/types/net-stubbing'
 import { FeatureFlag } from 'featureFlags'
 
@@ -191,7 +192,7 @@ describe('UniswapX Eth Input', () => {
 
     // Turn off automine so that intermediate screens are available to assert on.
     cy.hardhat({ automine: false }).then(async (hardhat) => {
-      await hardhat.fund(hardhat.wallet, CurrencyAmount.fromRawAmount(nativeOnChain(ChainId.MAINNET), 2e18))
+      await hardhat.fund(hardhat.wallet, CurrencyAmount.fromRawAmount(nativeOnChain(SupportedChainId.MAINNET), 2e18))
       await hardhat.mine()
     })
 

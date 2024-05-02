@@ -1,10 +1,11 @@
 // eslint-disable-next-line no-restricted-imports
 import { t, Trans } from '@lingui/macro'
 import { InterfaceEventName, InterfaceModalName } from '@uniswap/analytics-events'
-import { ChainId, Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import { Trace } from 'analytics'
 import { useCachedPortfolioBalancesQuery } from 'components/PrefetchBalancesWrapper/PrefetchBalancesWrapper'
+import { SupportedChainId } from 'constants/types'
 import { TokenBalance } from 'graphql/data/__generated__/types-and-hooks'
 import { supportedChainIdFromGQLChain } from 'graphql/data/util'
 import useDebounce from 'hooks/useDebounce'
@@ -108,7 +109,7 @@ export function CurrencySearch({
           return undefined
         }
 
-        const tokenChainId = supportedChainIdFromGQLChain(tokenBalance.token?.chain) ?? ChainId.MAINNET
+        const tokenChainId = supportedChainIdFromGQLChain(tokenBalance.token?.chain) ?? SupportedChainId.MAINNET
         if (tokenChainId !== chainId) {
           return undefined
         }
@@ -178,7 +179,8 @@ export function CurrencySearch({
       disableNonToken || native.equals(wrapped) ? [wrapped] : shouldShowWrapped ? [native, wrapped] : [native]
     ).filter((n) => n.symbol?.toLowerCase()?.indexOf(s) !== -1 || n.name?.toLowerCase()?.indexOf(s) !== -1)
 
-    return [...natives, ...tokens]
+    // return [...natives, ...tokens]
+    return [...tokens]
   }, [
     debouncedQuery,
     filteredSortedTokens,

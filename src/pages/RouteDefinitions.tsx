@@ -1,3 +1,4 @@
+import { MainViewComponent } from 'components/MainView/MainView'
 import { useInfoExplorePageEnabled } from 'featureFlags/flags/infoExplore'
 import { useInfoPoolPageEnabled } from 'featureFlags/flags/infoPoolPage'
 import { useAtom } from 'jotai'
@@ -102,71 +103,72 @@ export const routes: RouteDefinition[] = [
       return args.browserRouterEnabled && args.hash ? <Navigate to={args.hash.replace('#', '')} replace /> : <Landing />
     },
   }),
-  createRouteDefinition({
-    path: '/explore',
-    nestedPaths: [':tab', ':chainName'],
-    getElement: () => <RedirectExplore />,
-    enabled: (args) => Boolean(args.infoExplorePageEnabled),
-  }),
-  createRouteDefinition({
-    path: '/explore',
-    nestedPaths: [':tab/:chainName'],
-    getElement: () => <Explore />,
-    enabled: (args) => Boolean(args.infoExplorePageEnabled),
-  }),
-  createRouteDefinition({
-    path: '/explore/tokens/:chainName/:tokenAddress',
-    getElement: () => <TokenDetails />,
-    enabled: (args) => Boolean(args.infoExplorePageEnabled),
-  }),
-  createRouteDefinition({
-    path: '/tokens',
-    getElement: (args) => {
-      return args.infoExplorePageEnabled ? <Navigate to="/explore/tokens" replace /> : <Explore />
-    },
-  }),
-  createRouteDefinition({
-    path: '/tokens/:chainName',
-    getElement: (args) => {
-      return args.infoExplorePageEnabled ? <RedirectExplore /> : <Explore />
-    },
-  }),
-  createRouteDefinition({
-    path: '/tokens/:chainName/:tokenAddress',
-    getElement: (args) => {
-      return args.infoExplorePageEnabled ? <RedirectExplore /> : <TokenDetails />
-    },
-  }),
-  createRouteDefinition({
-    path: 'explore/pools/:chainName/:poolAddress',
-    getElement: () => (
-      <Suspense fallback={null}>
-        <PoolDetails />
-      </Suspense>
-    ),
-    enabled: (args) => Boolean(args.infoExplorePageEnabled && args.infoPoolPageEnabled),
-  }),
-  createRouteDefinition({
-    path: '/vote/*',
-    getElement: () => (
-      <Suspense fallback={<LazyLoadSpinner />}>
-        <Vote />
-      </Suspense>
-    ),
-  }),
-  createRouteDefinition({
-    path: '/create-proposal',
-    getElement: () => <Navigate to="/vote/create-proposal" replace />,
-  }),
-  createRouteDefinition({
-    path: '/send',
-    getElement: () => <Navigate to={{ ...location, pathname: '/swap' }} replace />,
-  }),
+  // createRouteDefinition({
+  //   path: '/explore',
+  //   nestedPaths: [':tab', ':chainName'],
+  //   getElement: () => <RedirectExplore />,
+  //   enabled: (args) => Boolean(args.infoExplorePageEnabled),
+  // }),
+  // createRouteDefinition({
+  //   path: '/explore',
+  //   nestedPaths: [':tab/:chainName'],
+  //   getElement: () => <Explore />,
+  //   enabled: (args) => Boolean(args.infoExplorePageEnabled),
+  // }),
+  // createRouteDefinition({
+  //   path: '/explore/tokens/:chainName/:tokenAddress',
+  //   getElement: () => <TokenDetails />,
+  //   enabled: (args) => Boolean(args.infoExplorePageEnabled),
+  // }),
+  // createRouteDefinition({
+  //   path: '/tokens',
+  //   getElement: (args) => {
+  //     return args.infoExplorePageEnabled ? <Navigate to="/explore/tokens" replace /> : <Explore />
+  //   },
+  // }),
+  // createRouteDefinition({
+  //   path: '/tokens/:chainName',
+  //   getElement: (args) => {
+  //     return args.infoExplorePageEnabled ? <RedirectExplore /> : <Explore />
+  //   },
+  // }),
+  // createRouteDefinition({
+  //   path: '/tokens/:chainName/:tokenAddress',
+  //   getElement: (args) => {
+  //     return args.infoExplorePageEnabled ? <RedirectExplore /> : <TokenDetails />
+  //   },
+  // }),
+  // createRouteDefinition({
+  //   path: 'explore/pools/:chainName/:poolAddress',
+  //   getElement: () => (
+  //     <Suspense fallback={null}>
+  //       <PoolDetails />
+  //     </Suspense>
+  //   ),
+  //   enabled: (args) => Boolean(args.infoExplorePageEnabled && args.infoPoolPageEnabled),
+  // }),
+  // createRouteDefinition({
+  //   path: '/vote/*',
+  //   getElement: () => (
+  //     <Suspense fallback={<LazyLoadSpinner />}>
+  //       <Vote />
+  //     </Suspense>
+  //   ),
+  // }),
+  // createRouteDefinition({
+  //   path: '/create-proposal',
+  //   getElement: () => <Navigate to="/vote/create-proposal" replace />,
+  // }),
+  // createRouteDefinition({
+  //   path: '/send',
+  //   getElement: () => <Navigate to={{ ...location, pathname: '/swap' }} replace />,
+  // }),
   createRouteDefinition({ path: '/swap', getElement: () => <Swap /> }),
-  createRouteDefinition({ path: '/pool/v2/find', getElement: () => <PoolFinder /> }),
-  createRouteDefinition({ path: '/pool/v2', getElement: () => <PoolV2 /> }),
-  createRouteDefinition({ path: '/pool', getElement: () => <Pool /> }),
-  createRouteDefinition({ path: '/pool/:tokenId', getElement: () => <PositionPage /> }),
+  createRouteDefinition({ path: '/ref', nestedPaths: [':referral'], getElement: () => <MainViewComponent /> }),
+  // createRouteDefinition({ path: '/pool/v2/find', getElement: () => <PoolFinder /> }),
+  // createRouteDefinition({ path: '/pool/v2', getElement: () => <PoolV2 /> }),
+  // createRouteDefinition({ path: '/pool', getElement: () => <Pool /> }),
+  // createRouteDefinition({ path: '/pool/:tokenId', getElement: () => <PositionPage /> }),
   createRouteDefinition({ path: '/pools/v2/find', getElement: () => <PoolFinder /> }),
   createRouteDefinition({ path: '/pools/v2', getElement: () => <PoolV2 /> }),
   createRouteDefinition({ path: '/pools', getElement: () => <Pool /> }),
@@ -182,20 +184,20 @@ export const routes: RouteDefinition[] = [
     getElement: () => <RedirectDuplicateTokenIds />,
   }),
 
-  createRouteDefinition({
-    path: '/increase',
-    nestedPaths: [
-      ':currencyIdA',
-      ':currencyIdA/:currencyIdB',
-      ':currencyIdA/:currencyIdB/:feeAmount',
-      ':currencyIdA/:currencyIdB/:feeAmount/:tokenId',
-    ],
-    getElement: () => <AddLiquidity />,
-  }),
+  // createRouteDefinition({
+  //   path: '/increase',
+  //   nestedPaths: [
+  //     ':currencyIdA',
+  //     ':currencyIdA/:currencyIdB',
+  //     ':currencyIdA/:currencyIdB/:feeAmount',
+  //     ':currencyIdA/:currencyIdB/:feeAmount/:tokenId',
+  //   ],
+  //   getElement: () => <AddLiquidity />,
+  // }),
   createRouteDefinition({ path: '/remove/v2/:currencyIdA/:currencyIdB', getElement: () => <RemoveLiquidity /> }),
-  createRouteDefinition({ path: '/remove/:tokenId', getElement: () => <RemoveLiquidityV3 /> }),
-  createRouteDefinition({ path: '/migrate/v2', getElement: () => <MigrateV2 /> }),
-  createRouteDefinition({ path: '/migrate/v2/:address', getElement: () => <MigrateV2Pair /> }),
+  // createRouteDefinition({ path: '/remove/:tokenId', getElement: () => <RemoveLiquidityV3 /> }),
+  // createRouteDefinition({ path: '/migrate/v2', getElement: () => <MigrateV2 /> }),
+  // createRouteDefinition({ path: '/migrate/v2/:address', getElement: () => <MigrateV2Pair /> }),
   createRouteDefinition({
     path: '/nfts',
     getElement: () => (

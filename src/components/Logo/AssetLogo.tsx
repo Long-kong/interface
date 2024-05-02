@@ -1,4 +1,4 @@
-import { ChainId } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/types'
 import useTokenLogoSource from 'hooks/useAssetLogoSource'
 import React, { useState } from 'react'
 import styled from 'styled-components'
@@ -55,7 +55,7 @@ const LogoContainer = styled.div`
 export default function AssetLogo({
   isNative,
   address,
-  chainId = ChainId.MAINNET,
+  chainId = SupportedChainId.MAINNET,
   symbol,
   backupImg,
   size = '24px',

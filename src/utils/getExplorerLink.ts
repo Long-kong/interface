@@ -1,20 +1,20 @@
-import { ChainId } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/types'
 
 const BLOCK_EXPLORER_PREFIXES: { [chainId: number]: string } = {
-  [ChainId.MAINNET]: 'https://etherscan.io',
-  [ChainId.GOERLI]: 'https://goerli.etherscan.io',
-  [ChainId.SEPOLIA]: 'https://sepolia.etherscan.io',
-  [ChainId.ARBITRUM_ONE]: 'https://arbiscan.io',
-  [ChainId.ARBITRUM_GOERLI]: 'https://goerli.arbiscan.io',
-  [ChainId.OPTIMISM]: 'https://optimistic.etherscan.io',
-  [ChainId.OPTIMISM_GOERLI]: 'https://goerli-optimism.etherscan.io',
-  [ChainId.POLYGON]: 'https://polygonscan.com',
-  [ChainId.POLYGON_MUMBAI]: 'https://mumbai.polygonscan.com',
-  [ChainId.CELO]: 'https://celoscan.io',
-  [ChainId.CELO_ALFAJORES]: 'https://alfajores-blockscout.celo-testnet.org',
-  [ChainId.BNB]: 'https://bscscan.com',
-  [ChainId.AVALANCHE]: 'https://snowtrace.io',
-  [ChainId.BASE]: 'https://basescan.org',
+  [SupportedChainId.MAINNET]: 'https://etherscan.io',
+  [SupportedChainId.GOERLI]: 'https://goerli.etherscan.io',
+  [SupportedChainId.SEPOLIA]: 'https://sepolia.etherscan.io',
+  [SupportedChainId.ARBITRUM_ONE]: 'https://arbiscan.io',
+  [SupportedChainId.ARBITRUM_GOERLI]: 'https://goerli.arbiscan.io',
+  [SupportedChainId.OPTIMISM]: 'https://optimistic.etherscan.io',
+  [SupportedChainId.OPTIMISM_GOERLI]: 'https://goerli-optimism.etherscan.io',
+  [SupportedChainId.POLYGON]: 'https://polygonscan.com',
+  [SupportedChainId.POLYGON_MUMBAI]: 'https://mumbai.polygonscan.com',
+  [SupportedChainId.CELO]: 'https://celoscan.io',
+  [SupportedChainId.CELO_ALFAJORES]: 'https://alfajores-blockscout.celo-testnet.org',
+  [SupportedChainId.BNB]: 'https://bscscan.com',
+  [SupportedChainId.AVALANCHE]: 'https://snowtrace.io',
+  [SupportedChainId.BASE]: 'https://basescan.org',
 }
 
 export enum ExplorerDataType {

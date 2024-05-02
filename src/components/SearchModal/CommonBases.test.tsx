@@ -1,4 +1,4 @@
-import { ChainId } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/types'
 import { render } from 'test-utils/render'
 
 import CommonBases from './CommonBases'
@@ -8,7 +8,7 @@ const mockOnSelect = jest.fn()
 describe('CommonBases', () => {
   it('renders without crashing', () => {
     const { container } = render(
-      <CommonBases chainId={ChainId.MAINNET} onSelect={mockOnSelect} searchQuery="" isAddressSearch={false} />
+      <CommonBases chainId={SupportedChainId.MAINNET} onSelect={mockOnSelect} searchQuery="" isAddressSearch={false} />
     )
     expect(container).toMatchSnapshot()
   })

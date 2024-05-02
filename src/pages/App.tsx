@@ -1,31 +1,34 @@
 import { CustomUserProperties, getBrowser, SharedEventName } from '@uniswap/analytics-events'
 import { useWeb3React } from '@web3-react/core'
 import { getDeviceId, sendAnalyticsEvent, sendInitializationEvent, Trace, user } from 'analytics'
+import AppBackground from 'assets/images/background.jpeg'
+import KingKong from 'assets/images/king-kong.png'
 import ErrorBoundary from 'components/ErrorBoundary'
 import Loader from 'components/Icons/LoadingSpinner'
 import NavBar, { PageTabs } from 'components/NavBar'
 import { UK_BANNER_HEIGHT, UK_BANNER_HEIGHT_MD, UK_BANNER_HEIGHT_SM, UkBanner } from 'components/NavBar/UkBanner'
+import { NewsBarComponent } from 'components/NewsBar/NewsBar'
 import { FeatureFlag, useFeatureFlagsIsLoaded } from 'featureFlags'
 import { useUniswapXDefaultEnabled } from 'featureFlags/flags/uniswapXDefault'
+import { useGetWethUsdtPrice } from 'hooks/useGetWethUsdtPrice'
 import { useAtom } from 'jotai'
 import { useBag } from 'nft/hooks/useBag'
-import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useSearchParams } from 'react-router-dom'
 import { shouldDisableNFTRoutesAtom } from 'state/application/atoms'
 import { useAppSelector } from 'state/hooks'
 import { AppState } from 'state/reducer'
 import { RouterPreference } from 'state/routing/types'
 import { useRouterPreference, useUserOptedOutOfUniswapX } from 'state/user/hooks'
-import { StatsigProvider, StatsigUser, useGate } from 'statsig-react'
+import { StatsigUser, useGate } from 'statsig-react'
 import styled from 'styled-components'
+import { keyframes } from 'styled-components'
+import { BREAKPOINTS } from 'theme'
 import DarkModeQueryParamReader from 'theme/components/DarkModeQueryParamReader'
 import { useIsDarkMode } from 'theme/components/ThemeToggle'
 import { flexRowNoWrap } from 'theme/styles'
 import { Z_INDEX } from 'theme/zIndex'
-import { STATSIG_DUMMY_KEY } from 'tracing'
 import { isPathBlocked } from 'utils/blockedPaths'
-import { getEnvName } from 'utils/env'
-import { MICROSITE_LINK } from 'utils/openDownloadApp'
 import { getCurrentPageFromLocation } from 'utils/urlRoutes'
 import { getCLS, getFCP, getFID, getLCP, Metric } from 'web-vitals'
 
@@ -33,15 +36,21 @@ import { RouteDefinition, routes, useRouterConfig } from './RouteDefinitions'
 
 const AppChrome = lazy(() => import('./AppChrome'))
 
-const BodyWrapper = styled.div<{ bannerIsVisible?: boolean }>`
+const SMALL_STRIP_HEIGHT = 35
+
+const BodyWrapper = styled.div<{ bannerIsVisible?: boolean; barIsVisible?: boolean }>`
   display: flex;
   flex-direction: column;
   width: 100%;
   min-height: calc(100vh - ${({ bannerIsVisible }) => (bannerIsVisible ? UK_BANNER_HEIGHT : 0)}px);
-  padding: ${({ theme }) => theme.navHeight}px 0px 5rem 0px;
+  min-height: calc(100vh - ${({ barIsVisible }) => (barIsVisible ? SMALL_STRIP_HEIGHT : 0)}px);
+  padding: ${({ theme }) => theme.navHeight}px 0 0 0;
   align-items: center;
   flex: 1;
-
+  position: relative;
+  background-image: url(${AppBackground});
+  background-size: cover;
+  background-position: center;
   @media only screen and (max-width: ${({ theme }) => `${theme.breakpoint.md}px`}) {
     min-height: calc(100vh - ${({ bannerIsVisible }) => (bannerIsVisible ? UK_BANNER_HEIGHT_MD : 0)}px);
   }
@@ -54,7 +63,9 @@ const BodyWrapper = styled.div<{ bannerIsVisible?: boolean }>`
 const MobileBottomBar = styled.div`
   z-index: ${Z_INDEX.sticky};
   position: fixed;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto;
   bottom: 0;
   right: 0;
   left: 0;
@@ -72,7 +83,12 @@ const MobileBottomBar = styled.div`
   }
 `
 
-const HeaderWrapper = styled.div<{ transparent?: boolean; bannerIsVisible?: boolean; scrollY: number }>`
+const HeaderWrapper = styled.div<{
+  transparent?: boolean
+  bannerIsVisible?: boolean
+  scrollY: number
+  barIsVisible?: boolean
+}>`
   ${flexRowNoWrap};
   background-color: ${({ theme, transparent }) => !transparent && theme.surface1};
   border-bottom: ${({ theme, transparent }) => !transparent && `1px solid ${theme.surface3}`};
@@ -80,18 +96,158 @@ const HeaderWrapper = styled.div<{ transparent?: boolean; bannerIsVisible?: bool
   justify-content: space-between;
   position: fixed;
   top: ${({ bannerIsVisible }) => (bannerIsVisible ? Math.max(UK_BANNER_HEIGHT - scrollY, 0) : 0)}px;
+  top: ${({ barIsVisible }) => (barIsVisible ? Math.max(SMALL_STRIP_HEIGHT - scrollY, 0) : 0)}px;
   z-index: ${Z_INDEX.dropdown};
 
   @media only screen and (max-width: ${({ theme }) => `${theme.breakpoint.md}px`}) {
     top: ${({ bannerIsVisible }) => (bannerIsVisible ? Math.max(UK_BANNER_HEIGHT_MD - scrollY, 0) : 0)}px;
+    top: ${({ barIsVisible }) => (barIsVisible ? Math.max(SMALL_STRIP_HEIGHT - scrollY, 0) : 0)}px;
   }
 
   @media only screen and (max-width: ${({ theme }) => `${theme.breakpoint.sm}px`}) {
     top: ${({ bannerIsVisible }) => (bannerIsVisible ? Math.max(UK_BANNER_HEIGHT_SM - scrollY, 0) : 0)}px;
+    top: ${({ barIsVisible }) => (barIsVisible ? Math.max(SMALL_STRIP_HEIGHT - scrollY, 0) : 0)}px;
+  }
+`
+
+const SmallStrip = styled.div`
+  position: relative;
+  z-index: 1020;
+  width: 100%;
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: bold;
+  color: white;
+  background: #0637a5;
+  padding: 8px;
+  height: ${SMALL_STRIP_HEIGHT}px;
+  div {
+    display: flex;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  }
+  span {
+    color: #112147;
+    position: absolute;
+    right: 0;
+    cursor: pointer;
+  }
+`
+
+const pulse = keyframes`
+0% {
+  transform: scale(0.95);
+  box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7);
+}
+
+70% {
+  transform: scale(1);
+  box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
+}
+
+100% {
+  transform: scale(0.95);
+  box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
+}
+`
+
+const LiveText = styled.div<{
+  bannerIsVisible?: boolean
+  barIsVisible?: boolean
+}>`
+  top: 0;
+  left: 0;
+  align-self: start;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 12px;
+  display: flex;
+  z-index: 3;
+  position: absolute;
+  top: ${({ theme }) => theme.navHeight + 'px'};
+  span:first-child {
+    background: white;
+    color: #ff2727;
+    padding: 10px 15px;
+    gap: 10px;
+    display: inline-flex;
+    align-items: center;
+    &:before {
+      content: '';
+      display: block;
+      width: 14px;
+      height: 14px;
+      background: rgba(255, 39, 39, 0.57);
+      border-radius: 50%;
+      position: relative;
+      transform: scale(1);
+      animation: ${pulse} 2s infinite;
+    }
+  }
+  span:last-child {
+    color: white;
+    background: #ff2727;
+    padding: 10px 15px;
+  }
+  @media screen and (min-width: ${BREAKPOINTS.xxl}px) {
+    font-size: 24px;
+  }
+`
+
+const KingKongDiv = styled.img`
+  position: absolute;
+  height: 320px;
+  bottom: 0;
+  right: 0;
+  @media screen and (min-width: ${BREAKPOINTS.xs}px) {
+    height: 720px;
+    right: 80px;
+  }
+  @media screen and (min-width: ${BREAKPOINTS.xxl}px) {
+    height: 1024px;
+    right: 191px;
   }
 `
 
 export default function App() {
+  const [hiddenBar, setHiddenBar] = useState(false)
+
+  const setBarPosition = useCallback(
+    (save?: boolean | undefined): void => {
+      const checkPosition = save !== undefined ? save : !hiddenBar
+      sessionStorage.setItem('bar', JSON.stringify(checkPosition))
+      setHiddenBar(checkPosition)
+    },
+    [hiddenBar]
+  )
+
+  const getWeth = useGetWethUsdtPrice()
+  const [usdPrice, setUsdPrice] = useState(0)
+
+  useEffect(() => {
+    const menuPositionRight = JSON.parse(sessionStorage.getItem('bar') ?? 'false')
+
+    setBarPosition(menuPositionRight)
+  }, [setBarPosition])
+
+  useEffect(() => {
+    getWeth().then((usd) => {
+      setUsdPrice(usd)
+      return usd
+    })
+
+    const interval = setInterval(() => {
+      getWeth().then((usd) => {
+        setUsdPrice(usd)
+        return usd
+      })
+    }, 5000)
+
+    return () => clearInterval(interval) // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+  }, [getWeth])
+
   const isLoaded = useFeatureFlagsIsLoaded()
   const [, setShouldDisableNFTRoutes] = useAtom(shouldDisableNFTRoutesAtom)
 
@@ -130,7 +286,8 @@ export default function App() {
   }, [])
 
   const isBagExpanded = useBag((state) => state.bagExpanded)
-  const isHeaderTransparent = !scrolledState && !isBagExpanded
+  // const isHeaderTransparent = !scrolledState && !isBagExpanded
+  const isHeaderTransparent = true
 
   const { account } = useWeb3React()
   const statsigUser: StatsigUser = useMemo(
@@ -141,18 +298,6 @@ export default function App() {
     [account]
   )
 
-  // redirect address to landing pages until implemented
-  const shouldRedirectToAppInstall = pathname?.startsWith('/address/')
-  useLayoutEffect(() => {
-    if (shouldRedirectToAppInstall) {
-      window.location.href = MICROSITE_LINK
-    }
-  }, [shouldRedirectToAppInstall])
-
-  if (shouldRedirectToAppInstall) {
-    return null
-  }
-
   const shouldBlockPath = isPathBlocked(pathname)
   if (shouldBlockPath && pathname !== '/swap') {
     return <Navigate to="/swap" replace />
@@ -162,47 +307,56 @@ export default function App() {
     <ErrorBoundary>
       <DarkModeQueryParamReader />
       <Trace page={currentPage}>
-        <StatsigProvider
-          user={statsigUser}
-          // TODO: replace with proxy and cycle key
-          sdkKey={STATSIG_DUMMY_KEY}
-          waitForInitialization={false}
-          options={{
-            environment: { tier: getEnvName() },
-            api: process.env.REACT_APP_STATSIG_PROXY_URL,
-          }}
+        <UserPropertyUpdater />
+        {renderUkBannner && <UkBanner />}
+        {!hiddenBar && (
+          <SmallStrip>
+            <div>
+              &#128680; MAKE SURE YOU BOOKMARK THIS LINK HTTPS://LONGKONG.WIN &#128680;{' '}
+              <span onClick={() => setBarPosition()}>x</span>
+            </div>
+          </SmallStrip>
+        )}
+        <HeaderWrapper
+          transparent={isHeaderTransparent}
+          bannerIsVisible={renderUkBannner}
+          barIsVisible={!hiddenBar}
+          scrollY={scrollY}
         >
-          <UserPropertyUpdater />
-          {renderUkBannner && <UkBanner />}
-          <HeaderWrapper transparent={isHeaderTransparent} bannerIsVisible={renderUkBannner} scrollY={scrollY}>
-            <NavBar blur={isHeaderTransparent} />
-          </HeaderWrapper>
-          <BodyWrapper bannerIsVisible={renderUkBannner}>
-            <Suspense>
-              <AppChrome />
-            </Suspense>
-            <Suspense fallback={<Loader />}>
-              {isLoaded ? (
-                <Routes>
-                  {routes.map((route: RouteDefinition) =>
-                    route.enabled(routerConfig) ? (
-                      <Route key={route.path} path={route.path} element={route.getElement(routerConfig)}>
-                        {route.nestedPaths.map((nestedPath) => (
-                          <Route path={nestedPath} key={`${route.path}/${nestedPath}`} />
-                        ))}
-                      </Route>
-                    ) : null
-                  )}
-                </Routes>
-              ) : (
-                <Loader />
-              )}
-            </Suspense>
-          </BodyWrapper>
-          <MobileBottomBar>
-            <PageTabs />
-          </MobileBottomBar>
-        </StatsigProvider>
+          {/* <NavBar blur={isHeaderTransparent} /> */}
+          <NavBar blur={false} />
+        </HeaderWrapper>
+        <BodyWrapper bannerIsVisible={renderUkBannner} barIsVisible={!hiddenBar}>
+          <LiveText bannerIsVisible={renderUkBannner} barIsVisible={!hiddenBar}>
+            <span>Live</span>
+            <span>${usdPrice}</span>
+          </LiveText>
+          <KingKongDiv src={KingKong} />
+          <Suspense>
+            <AppChrome />
+          </Suspense>
+          <Suspense fallback={<Loader />}>
+            {isLoaded ? (
+              <Routes>
+                {routes.map((route: RouteDefinition) =>
+                  route.enabled(routerConfig) ? (
+                    <Route key={route.path} path={route.path} element={route.getElement(routerConfig)}>
+                      {route.nestedPaths.map((nestedPath) => (
+                        <Route path={nestedPath} key={`${route.path}/${nestedPath}`} />
+                      ))}
+                    </Route>
+                  ) : null
+                )}
+              </Routes>
+            ) : (
+              <Loader />
+            )}
+          </Suspense>
+          <NewsBarComponent />
+        </BodyWrapper>
+        <MobileBottomBar>
+          <PageTabs />
+        </MobileBottomBar>
       </Trace>
     </ErrorBoundary>
   )

@@ -1,8 +1,8 @@
 import { Trans } from '@lingui/macro'
-import { ChainId } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import { ButtonPrimary } from 'components/Button'
 import { getChainInfo } from 'constants/chainInfo'
+import { SupportedChainId } from 'constants/types'
 import useSelectChain from 'hooks/useSelectChain'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
@@ -43,7 +43,7 @@ export default function InvalidTokenDetails({
   pageChainId,
   isInvalidAddress,
 }: {
-  pageChainId: ChainId
+  pageChainId: SupportedChainId
   isInvalidAddress?: boolean
 }) {
   const { chainId } = useWeb3React()

@@ -1,16 +1,17 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import type { TransactionResponse } from '@ethersproject/providers'
 import { Trans } from '@lingui/macro'
-import { BrowserEvent, InterfaceElementName, InterfaceEventName, LiquidityEventName } from '@uniswap/analytics-events'
 import { Currency, CurrencyAmount, Percent } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
-import { sendAnalyticsEvent, TraceEvent, useTrace } from 'analytics'
 import { useToggleAccountDrawer } from 'components/AccountDrawer'
+import { Notification, NotificationWrapper } from 'components/Notification/Notification'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
 import { V2Unsupported } from 'components/V2Unsupported'
+import { useGetBootstrap } from 'hooks/useGetBootstrap'
+import { useGetCycle } from 'hooks/useGetCycle'
 import { useNetworkSupportsV2 } from 'hooks/useNetworkSupportsV2'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Plus } from 'react-feather'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Text } from 'rebass'
@@ -26,11 +27,11 @@ import { AddRemoveTabs } from '../../components/NavigationTabs'
 import { MinimalPositionCard } from '../../components/PositionCard'
 import Row, { AutoRow, RowBetween, RowFlat } from '../../components/Row'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
-import { ZERO_PERCENT } from '../../constants/misc'
+import { CONTRACT_ADDRESS, SWAP_CONTRACT_ABI, ZERO_PERCENT } from '../../constants/misc'
 import { WRAPPED_NATIVE_CURRENCY } from '../../constants/tokens'
 import { useCurrency } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
-import { useV2RouterContract } from '../../hooks/useContract'
+import { useContract, useV2RouterContract } from '../../hooks/useContract'
 import { useIsSwapUnsupported } from '../../hooks/useIsSwapUnsupported'
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import { PairState } from '../../hooks/useV2Pairs'
@@ -56,12 +57,15 @@ const AddLiquidityHeaderContainer = styled(AutoColumn)`
 `
 
 export default function AddLiquidity() {
-  const { currencyIdA, currencyIdB } = useParams<{ currencyIdA?: string; currencyIdB?: string }>()
+  // defaultOutputLiquidity
+  const { currencyIdA, currencyIdB = CONTRACT_ADDRESS } = useParams<{
+    currencyIdA?: string
+    currencyIdB?: string
+  }>()
   const navigate = useNavigate()
   const { account, chainId, provider } = useWeb3React()
 
   const theme = useTheme()
-  const trace = useTrace()
 
   const currencyA = useCurrency(currencyIdA)
   const currencyB = useCurrency(currencyIdB)
@@ -132,6 +136,7 @@ export default function AddLiquidity() {
     {}
   )
 
+  const contract = useContract(CONTRACT_ADDRESS, SWAP_CONTRACT_ABI)
   const router = useV2RouterContract()
 
   // check whether the user has approved the router on the tokens
@@ -141,8 +146,18 @@ export default function AddLiquidity() {
   const addTransaction = useTransactionAdder()
   const networkSupportsV2 = useNetworkSupportsV2()
 
+  const [cycle, setCycle] = useState<BigNumber>()
+  const getCycle = useGetCycle()
+
+  useEffect(() => {
+    getCycle().then((cycle) => {
+      setCycle(cycle)
+      return cycle
+    })
+  }, [getCycle])
+
   async function onAdd() {
-    if (!chainId || !provider || !account || !router || !networkSupportsV2) return
+    if (!chainId || !provider || !account || !router || !networkSupportsV2 || !contract) return
 
     const { [Field.CURRENCY_A]: parsedAmountA, [Field.CURRENCY_B]: parsedAmountB } = parsedAmounts
     if (!parsedAmountA || !parsedAmountB || !currencyA || !currencyB || !deadline) {
@@ -207,12 +222,6 @@ export default function AddLiquidity() {
           addTransaction(response, transactionInfo)
 
           setTxHash(response.hash)
-
-          sendAnalyticsEvent(LiquidityEventName.ADD_LIQUIDITY_SUBMITTED, {
-            label: [currencies[Field.CURRENCY_A]?.symbol, currencies[Field.CURRENCY_B]?.symbol].join('/'),
-            ...trace,
-            ...transactionInfo,
-          })
         })
       )
       .catch((error) => {
@@ -325,16 +334,44 @@ export default function AddLiquidity() {
     setTxHash('')
   }, [onFieldAInput, txHash])
 
+  const [inBootstrap, setInBootstrap] = useState<boolean>()
+
+  const getBootstrap = useGetBootstrap()
+
+  useEffect(() => {
+    getBootstrap().then((bootstrap) => {
+      setInBootstrap(bootstrap)
+      if (bootstrap) {
+        displayBootstrapNotification("You don't need KONG to participate. It will be minted automatically.")
+      }
+      return bootstrap
+    })
+  }, [getBootstrap])
+
+  const [bootstrapNotification, setBootstrapNotification] = useState({ show: false, msg: '' })
+
+  const displayBootstrapNotification = (msg: string) => {
+    setBootstrapNotification({ show: true, msg })
+  }
+
+  const hideBootstrapNotification = () => {
+    setBootstrapNotification({ show: false, msg: '' })
+  }
+
   const { pathname } = useLocation()
   const isCreate = pathname.includes('/create')
 
   const addIsUnsupported = useIsSwapUnsupported(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
-
   if (!networkSupportsV2) return <V2Unsupported />
 
   return (
     <>
       <AppBody>
+        <NotificationWrapper>
+          {bootstrapNotification.show && (
+            <Notification message={bootstrapNotification.msg} handleClick={hideBootstrapNotification} />
+          )}
+        </NotificationWrapper>
         <AddRemoveTabs creating={isCreate} adding={true} autoSlippage={DEFAULT_ADD_V2_SLIPPAGE_TOLERANCE} />
         <Wrapper>
           <TransactionConfirmationModal
@@ -395,7 +432,7 @@ export default function AddLiquidity() {
               onMax={() => {
                 onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')
               }}
-              onCurrencySelect={handleCurrencyASelect}
+              // onCurrencySelect={handleCurrencyASelect}
               showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
               currency={currencies[Field.CURRENCY_A] ?? null}
               id="add-liquidity-input-tokena"
@@ -407,7 +444,7 @@ export default function AddLiquidity() {
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_B]}
               onUserInput={onFieldBInput}
-              onCurrencySelect={handleCurrencyBSelect}
+              // onCurrencySelect={handleCurrencyBSelect}
               onMax={() => {
                 onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? '')
               }}
@@ -447,23 +484,18 @@ export default function AddLiquidity() {
                 </ThemedText.DeprecatedMain>
               </ButtonPrimary>
             ) : !account ? (
-              <TraceEvent
-                events={[BrowserEvent.onClick]}
-                name={InterfaceEventName.CONNECT_WALLET_BUTTON_CLICKED}
-                properties={{ received_swap_quote: false }}
-                element={InterfaceElementName.CONNECT_WALLET_BUTTON}
-              >
-                <ButtonLight onClick={toggleWalletDrawer}>
-                  <Trans>Connect wallet</Trans>
-                </ButtonLight>
-              </TraceEvent>
+              <ButtonLight onClick={toggleWalletDrawer}>
+                <Trans>Connect wallet</Trans>
+              </ButtonLight>
             ) : (
               <AutoColumn gap="md">
                 {(approvalA === ApprovalState.NOT_APPROVED ||
                   approvalA === ApprovalState.PENDING ||
                   approvalB === ApprovalState.NOT_APPROVED ||
                   approvalB === ApprovalState.PENDING) &&
-                  isValid && (
+                  isValid &&
+                  cycle &&
+                  !cycle.eq(0) && (
                     <RowBetween>
                       {approvalA !== ApprovalState.APPROVED && (
                         <ButtonPrimary
@@ -497,17 +529,30 @@ export default function AddLiquidity() {
                       )}
                     </RowBetween>
                   )}
-                <ButtonError
-                  onClick={() => {
-                    setShowConfirm(true)
-                  }}
-                  disabled={!isValid || approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED}
-                  error={!isValid && !!parsedAmounts[Field.CURRENCY_A] && !!parsedAmounts[Field.CURRENCY_B]}
-                >
-                  <Text fontSize={20} fontWeight={535}>
-                    {error ?? <Trans>Supply</Trans>}
-                  </Text>
-                </ButtonError>
+                {cycle && cycle.eq(0) ? (
+                  <ButtonError
+                    onClick={() => {
+                      setShowConfirm(true)
+                    }}
+                    error={!isValid && !!parsedAmounts[Field.CURRENCY_A] && !!parsedAmounts[Field.CURRENCY_B]}
+                  >
+                    <Text fontSize={20} fontWeight={535}>
+                      <Trans>Supply</Trans>
+                    </Text>
+                  </ButtonError>
+                ) : (
+                  <ButtonError
+                    onClick={() => {
+                      setShowConfirm(true)
+                    }}
+                    disabled={!isValid || approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED}
+                    error={!isValid && !!parsedAmounts[Field.CURRENCY_A] && !!parsedAmounts[Field.CURRENCY_B]}
+                  >
+                    <Text fontSize={20} fontWeight={535}>
+                      {error ?? <Trans>Supply</Trans>}
+                    </Text>
+                  </ButtonError>
+                )}
               </AutoColumn>
             )}
           </AutoColumn>

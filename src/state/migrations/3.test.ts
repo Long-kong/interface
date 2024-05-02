@@ -1,4 +1,5 @@
-import { ChainId, Token } from '@uniswap/sdk-core'
+import { Token } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/types'
 import { createMigrate } from 'redux-persist'
 import { RouterPreference } from 'state/routing/types'
 import { SlippageTolerance } from 'state/user/types'
@@ -17,18 +18,18 @@ const previousState: PersistAppStateV3 = {
     userDeadline: 1800,
     tokens: {
       // wrong tokens
-      [ChainId.OPTIMISM]: {
+      [SupportedChainId.OPTIMISM]: {
         '0x7F5c764cBc14f9669B88837ca1490cCa17c31607': new Token(
-          ChainId.OPTIMISM,
+          SupportedChainId.OPTIMISM,
           '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
           6,
           'USDC',
           'USD Coin'
         ),
       },
-      [ChainId.BASE]: {
+      [SupportedChainId.BASE]: {
         '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA': new Token(
-          ChainId.BASE,
+          SupportedChainId.BASE,
           '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
           6,
           'USDC',
@@ -58,14 +59,16 @@ describe('migration to v3', () => {
     )
     const result: any = await migrator(previousState, 3)
     expect(Object.keys(result?.user?.tokens).length).toEqual(2)
-    expect(result?.user?.tokens[ChainId.OPTIMISM]?.['0x7F5c764cBc14f9669B88837ca1490cCa17c31607'].symbol).toEqual(
-      'USDC.e'
+    expect(
+      result?.user?.tokens[SupportedChainId.OPTIMISM]?.['0x7F5c764cBc14f9669B88837ca1490cCa17c31607'].symbol
+    ).toEqual('USDC.e')
+    expect(
+      result?.user?.tokens[SupportedChainId.OPTIMISM]?.['0x7F5c764cBc14f9669B88837ca1490cCa17c31607'].name
+    ).toEqual('Bridged USDC')
+    expect(result?.user?.tokens[SupportedChainId.BASE]?.['0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA'].symbol).toEqual(
+      'USDbC'
     )
-    expect(result?.user?.tokens[ChainId.OPTIMISM]?.['0x7F5c764cBc14f9669B88837ca1490cCa17c31607'].name).toEqual(
-      'Bridged USDC'
-    )
-    expect(result?.user?.tokens[ChainId.BASE]?.['0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA'].symbol).toEqual('USDbC')
-    expect(result?.user?.tokens[ChainId.BASE]?.['0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA'].name).toEqual(
+    expect(result?.user?.tokens[SupportedChainId.BASE]?.['0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA'].name).toEqual(
       'USD Base Coin'
     )
 

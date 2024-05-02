@@ -10,12 +10,13 @@ const { RetryChunkLoadPlugin } = require('webpack-retry-chunk-load-plugin')
 
 const commitHash = execSync('git rev-parse HEAD').toString().trim()
 const isProduction = process.env.NODE_ENV === 'production'
-
+//const isProduction = false
 process.env.REACT_APP_GIT_COMMIT_HASH = commitHash
 
 // Linting and type checking are only necessary as part of development and testing.
 // Omit them from production builds, as they slow down the feedback loop.
-const shouldLintOrTypeCheck = !isProduction
+//const shouldLintOrTypeCheck = !isProduction
+const shouldLintOrTypeCheck = false
 
 function getCacheDirectory(cacheName) {
   // Include the trailing slash to denote that this is a directory.

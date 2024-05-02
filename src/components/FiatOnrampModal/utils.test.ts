@@ -1,4 +1,4 @@
-import { ChainId, WETH9 } from '@uniswap/sdk-core'
+import { WETH9 } from '@uniswap/sdk-core'
 import {
   MATIC_MAINNET,
   USDC_ARBITRUM,
@@ -9,6 +9,7 @@ import {
   WBTC,
   WETH_POLYGON,
 } from 'constants/tokens'
+import { SupportedChainId } from 'constants/types'
 
 import { getDefaultCurrencyCode, parsePathParts } from './utils'
 
@@ -23,7 +24,7 @@ describe('getDefaultCurrencyCode', () => {
     expect(getDefaultCurrencyCode(WETH_POLYGON.address, 'polygon')).toBe('eth_polygon')
   })
   it('WETH/ethereum should return the correct currency code', () => {
-    expect(getDefaultCurrencyCode(WETH9[ChainId.MAINNET].address, 'ethereum')).toBe('weth')
+    expect(getDefaultCurrencyCode(WETH9[SupportedChainId.MAINNET].address, 'ethereum')).toBe('weth')
   })
   it('WBTC/ethereum should return the correct currency code', () => {
     expect(getDefaultCurrencyCode(WBTC.address, 'ethereum')).toBe('wbtc')

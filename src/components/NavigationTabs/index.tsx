@@ -92,7 +92,7 @@ export function AddRemoveTabs({
     <Tabs>
       <RowBetween style={{ padding: '1rem 1rem 0 1rem' }} align="center">
         <StyledLink
-          to={poolLink}
+          to="/swap"
           onClick={() => {
             if (adding) {
               // not 100% sure both of these are needed

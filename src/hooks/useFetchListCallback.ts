@@ -1,6 +1,6 @@
 import { nanoid } from '@reduxjs/toolkit'
-import { ChainId } from '@uniswap/sdk-core'
 import { TokenList } from '@uniswap/token-lists'
+import { SupportedChainId } from 'constants/types'
 import { DEPRECATED_RPC_PROVIDERS, RPC_PROVIDERS } from 'constants/providers'
 import { useFallbackProviderEnabled } from 'featureFlags/flags/fallbackProvider'
 import getTokenList from 'lib/hooks/useTokenList/fetchTokenList'
@@ -20,7 +20,7 @@ export function useFetchListCallback(): (listUrl: string, skipValidation?: boole
       dispatch(fetchTokenList.pending({ requestId, url: listUrl }))
       return getTokenList(
         listUrl,
-        (ensName: string) => resolveENSContentHash(ensName, providers[ChainId.MAINNET]),
+        (ensName: string) => resolveENSContentHash(ensName, providers[SupportedChainId.MAINNET]),
         skipValidation
       )
         .then((tokenList) => {
